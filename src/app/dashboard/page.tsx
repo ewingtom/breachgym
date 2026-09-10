@@ -67,17 +67,28 @@ function DashboardContent() {
             streak={profile.streak}
           />
 
-          <div className="mt-6 space-y-1 border-b border-[var(--hairline-light)] pb-5">
-            <Link href="/adaptive" className="link-copper inline-flex items-baseline gap-2 text-sm">
-              Adaptive Review
-              <span className="text-xs font-normal text-muted">
-                {cold
-                  ? "· cold-start hard sampler"
-                  : weak.length
-                    ? `· ${weak.map((w) => w.label).join(", ")}`
-                    : "· spaced weak topics"}
-              </span>
-            </Link>
+          <div className="mt-6 space-y-2 border-b border-[var(--hairline-light)] pb-5">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              <Link href="/adaptive" className="link-copper inline-flex items-baseline gap-2 text-sm">
+                Adaptive Review
+                <span className="text-xs font-normal text-muted">
+                  {cold
+                    ? "· cold-start hard sampler"
+                    : weak.length
+                      ? `· ${weak.map((w) => w.label).join(", ")}`
+                      : "· spaced weak topics"}
+                </span>
+              </Link>
+              <Link
+                href="/adaptive?fresh=1"
+                className="text-xs text-muted underline decoration-[var(--hairline-light)] underline-offset-2 hover:text-ink"
+              >
+                Fresh drill
+              </Link>
+            </div>
+            <p className="text-xs text-muted">
+              Practice · each visit gets a new session seed and shuffled procedural set.
+            </p>
           </div>
 
           {canSkipDemo && (
@@ -96,9 +107,12 @@ function DashboardContent() {
               <button
                 type="button"
                 className="btn-secondary shrink-0 text-sm"
-                onClick={() => skipToAdvanced()}
+                onClick={() => {
+                  skipToAdvanced();
+                  router.push("/adaptive?fresh=1");
+                }}
               >
-                Skip (demo)
+                Skip to advanced
               </button>
             </div>
           )}

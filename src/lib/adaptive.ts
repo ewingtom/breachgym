@@ -13,6 +13,14 @@ import {
   UserProfile,
 } from "@/lib/types";
 import { STATE_MAP } from "@/data/states";
+import { deriveDifficulty, DIFFICULTY_LABELS, DifficultyLevel } from "@/lib/difficulty";
+import {
+  fingerprintOfGenerated,
+  generateQuestionPool,
+  GeneratedMcq,
+} from "@/lib/questionFactory";
+import { createSessionSeed } from "@/lib/sessionSeed";
+import { rngFromSeedString, seededShuffle } from "@/lib/rng";
 
 export const DEFAULT_EASINESS = 2.5;
 export const MIN_EASINESS = 1.3;
@@ -118,8 +126,10 @@ export function reviewPriority(stat: MasteryStat | undefined, nowMs = Date.now()
 
 export type AdaptiveCard = McqItem & {
   /** Where the card came from for UI copy. */
-  source: "lesson" | "drill-snippet" | "cold-start";
+  source: "lesson" | "drill-snippet" | "cold-start" | "generated";
   moduleId?: string;
+  /** Procedural fingerprint for de-dupe across sessions. */
+  fingerprint?: string;
 };
 
 function lessonToCards(): AdaptiveCard[] {
@@ -389,42 +399,96 @@ function shuffle<T>(arr: T[]): T[] {
 
 /**
  * Build a short Adaptive Review / Weak Spot Workout session (5–8 items).
- * Wrong answers raise priority via mastery bumps recorded by the caller.
+ * Procedural generation + adaptive selection: unique session seed, difficulty
+ * from mastery, weak-topic candidates, shuffle within priority bands.
  */
+export type AdaptiveSessionResult = {
+  cards: AdaptiveCard[];
+  reason: string;
+  coldStart: boolean;
+  seed: string;
+  difficulty: DifficultyLevel;
+  difficultyLabel: string;
+  fingerprints: string[];
+};
+
 export function buildAdaptiveSession(
   profile: UserProfile,
-  filter: SessionFilter = {}
-): { cards: AdaptiveCard[]; reason: string; coldStart: boolean } {
+  filter: SessionFilter = {},
+  seed?: string
+): AdaptiveSessionResult {
   const size = Math.min(8, Math.max(5, filter.size ?? 6));
+  const sessionSeed = seed || createSessionSeed(profile.name || "Associate");
+  const rng = rngFromSeedString(sessionSeed);
+  const difficulty = deriveDifficulty(profile);
+  const difficultyLabel = DIFFICULTY_LABELS[difficulty];
   const pool = adaptivePool();
 
+  const weakT = weakTopics(profile, 6);
+  const weakS = weakStates(profile, 6);
+  const preferTopics =
+    filter.topics?.length ? filter.topics : weakT.map((w) => w.topic);
+  const preferStates =
+    filter.states?.length ? filter.states : weakS.map((w) => w.code);
+
+  // --- Generated candidates (primary freshness) ---
+  const generated = generateQuestionPool({
+    seed: sessionSeed,
+    profile,
+    size: size * 3,
+    difficulty,
+    preferTopics,
+    preferStates,
+    topics: filter.topics,
+    states: filter.states,
+  });
+
+  const toAdaptive = (g: GeneratedMcq): AdaptiveCard => ({
+    ...g,
+    source: "generated",
+  });
+
   if (!hasAdaptiveHistory(profile) && !filter.topics?.length && !filter.states?.length) {
+    const coldGen = generated.slice(0, Math.max(3, Math.floor(size * 0.7))).map(toAdaptive);
+    const coldAuth = seededShuffle(
+      coldStartSampler(size * 2).filter(
+        (c) => !(profile.seenFingerprints || []).includes(c.id)
+      ),
+      rng
+    ).slice(0, size - coldGen.length);
+    const cards = seededShuffle([...coldGen, ...coldAuth], rng).slice(0, size);
+    const fingerprints = cards.map((c) =>
+      "fingerprint" in c && typeof (c as AdaptiveCard & { fingerprint?: string }).fingerprint === "string"
+        ? (c as AdaptiveCard & { fingerprint: string }).fingerprint
+        : c.id
+    );
     return {
-      cards: coldStartSampler(size),
+      cards,
       reason:
         "No miss history yet — seeding a hard multi-state sampler (clocks, AG thresholds, risk seams, PI splits).",
       coldStart: true,
+      seed: sessionSeed,
+      difficulty,
+      difficultyLabel,
+      fingerprints,
     };
   }
 
   const topicFilter = filter.topics?.map((t) => t.toLowerCase());
   const stateFilter = filter.states?.map((s) => s.toUpperCase());
 
+  // Rank authored pool by weakness
   const ranked = pool
     .map((card) => {
       const tags = (card.topics || itemTopics(card)).map((t) => t.toLowerCase());
       const itemStat = profile.itemMastery?.[card.id];
       let score = reviewPriority(itemStat);
-
-      // Boost by weak related topics
       for (const t of tags) {
         score += reviewPriority(profile.topicMastery?.[t]) * 0.35;
       }
-      // Boost by weak related states
       for (const s of card.states || []) {
         score += reviewPriority(profile.stateMastery?.[s]) * 0.25;
       }
-
       if (topicFilter?.length) {
         const hit = tags.some((t) => topicFilter.includes(t));
         if (!hit) score = -1;
@@ -437,16 +501,46 @@ export function buildAdaptiveSession(
         } else if (!hit) score = -1;
         else score += 60;
       }
+      // Soft-penalize recently seen authored ids
+      if ((profile.seenFingerprints || []).includes(card.id)) score *= 0.35;
       return { card, score };
     })
     .filter((r) => r.score >= 0)
     .sort((a, b) => b.score - a.score);
 
-  // Take top candidates with light shuffle among near-peers to avoid identical sessions
-  const top = ranked.slice(0, Math.min(ranked.length, size * 3));
-  const picked = shuffle(top).sort((a, b) => b.score - a.score).slice(0, size);
+  // Priority bands: top / mid — shuffle within bands, then merge with generated
+  const bandSize = Math.max(3, Math.ceil(size * 1.5));
+  const topBand = seededShuffle(ranked.slice(0, bandSize), rng);
+  const midBand = seededShuffle(ranked.slice(bandSize, bandSize * 2), rng);
 
-  const weak = weakTopics(profile, 3).map((w) => w.label);
+  // Mix: ~60–75% generated for freshness, rest authored weak items
+  const genQuota = Math.min(
+    generated.length,
+    difficulty === "novice" ? Math.ceil(size * 0.5) : Math.ceil(size * 0.7)
+  );
+  const authQuota = size - genQuota;
+
+  const pickedAuth: AdaptiveCard[] = [];
+  for (const row of [...topBand, ...midBand]) {
+    if (pickedAuth.length >= authQuota) break;
+    if (pickedAuth.some((c) => c.id === row.card.id)) continue;
+    pickedAuth.push(row.card);
+  }
+
+  const pickedGen = seededShuffle(generated, rng).slice(0, genQuota).map(toAdaptive);
+
+  // Combine: keep high-priority authored near front of band, then shuffle within session
+  let cards = seededShuffle([...pickedGen, ...pickedAuth], rng);
+
+  // Fallback
+  if (cards.length < size) {
+    const fill = coldStartSampler(size - cards.length);
+    cards = [...cards, ...fill].slice(0, size);
+  } else {
+    cards = cards.slice(0, size);
+  }
+
+  const weak = weakT.slice(0, 3).map((w) => w.label);
   const reason =
     topicFilter?.length || stateFilter?.length
       ? `Filtered workout focused on ${[
@@ -454,16 +548,23 @@ export function buildAdaptiveSession(
           ...(stateFilter || []),
         ].join(", ")}.`
       : weak.length
-        ? `Based on your misses in ${weak.join(", ")} — surfacing weak topics/states first.`
-        : "Spaced review of items with the lowest mastery / longest gap.";
+        ? `Based on your misses in ${weak.join(", ")} — fresh procedural items + weak topics/states.`
+        : "Spaced review with a freshly generated set (templates × jurisdictions × difficulty).";
 
-  // Fallback if filters wiped the pool
-  const cards =
-    picked.length > 0
-      ? picked.map((p) => p.card)
-      : coldStartSampler(size);
+  const fingerprints = cards.map((c) => {
+    const g = c as AdaptiveCard & { fingerprint?: string };
+    return g.fingerprint || fingerprintOfGenerated(c) || c.id;
+  });
 
-  return { cards, reason, coldStart: false };
+  return {
+    cards,
+    reason,
+    coldStart: false,
+    seed: sessionSeed,
+    difficulty,
+    difficultyLabel,
+    fingerprints,
+  };
 }
 
 /** Optionally interleave 1–2 adaptive review cards into a module lesson. */

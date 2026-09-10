@@ -17,6 +17,12 @@ import {
   itemTopics,
   moduleRelatedTopics,
 } from "@/lib/adaptive";
+import {
+  generateLessonVariants,
+  shuffleLessonItems,
+} from "@/lib/questionFactory";
+import { createSessionSeed } from "@/lib/sessionSeed";
+import { LessonItem } from "@/lib/types";
 
 function LessonContent() {
   const params = useParams();
@@ -29,35 +35,56 @@ function LessonContent() {
   const [showCelebrate, setShowCelebrate] = useState(false);
   const [finished, setFinished] = useState(false);
   const [interleaved, setInterleaved] = useState<AdaptiveCard[]>([]);
+  const [generated, setGenerated] = useState<LessonItem[]>([]);
+  const [lessonSeed, setLessonSeed] = useState("");
 
   // Reset player state when the route module changes (avoids stale idx / wrong totals).
-  // Freeze interleaved review cards for this lesson visit so mastery bumps mid-lesson
-  // do not reshuffle the queue.
+  // Freeze interleaved + generated cards for this lesson visit so mastery bumps mid-lesson
+  // do not reshuffle the queue. Session seed reshuffles authored order each visit.
   useEffect(() => {
     setIdx(0);
     setResolved(false);
     setFinished(false);
     setShowCelebrate(false);
     if (profile && mod) {
-      setInterleaved(interleaveForModule(profile, mod.id, moduleRelatedTopics(mod.id)));
+      const seed = createSessionSeed(profile.name || "Associate");
+      setLessonSeed(seed);
+      const related = moduleRelatedTopics(mod.id);
+      setInterleaved(interleaveForModule(profile, mod.id, related));
+      // Keep Foundations core denser; inject 1–3 variants elsewhere / after foundations done once
+      const variantCount =
+        mod.id === "foundations" ? 1 : mod.id === "capstone" ? 3 : 2;
+      setGenerated(generateLessonVariants(mod.id, related, profile, seed, variantCount));
     } else {
       setInterleaved([]);
+      setGenerated([]);
+      setLessonSeed("");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only reseat on module change
   }, [moduleId]);
 
   const items = useMemo(() => {
     const baseItems = mod?.lessonItems ?? [];
-    if (!interleaved.length) return baseItems;
-    const out = [...baseItems];
-    const insertAt = Math.min(2, Math.max(0, out.length - 1));
-    const tagged = interleaved.map((c) => ({
-      ...c,
-      question: `Review · ${c.question}`,
-    }));
-    out.splice(insertAt, 0, ...tagged);
+    const keepFirst = mod?.id === "foundations";
+    const shuffled = lessonSeed
+      ? shuffleLessonItems(baseItems, `${lessonSeed}:mod`, { keepFirstNarrative: keepFirst })
+      : baseItems;
+    const out: LessonItem[] = [...shuffled];
+    // Inject generated variants near the middle
+    if (generated.length) {
+      const insertAt = Math.min(Math.max(2, Math.floor(out.length / 2)), Math.max(0, out.length - 1));
+      out.splice(insertAt, 0, ...generated);
+    }
+    if (interleaved.length) {
+      const insertAt = Math.min(2, Math.max(0, out.length - 1));
+      const tagged = interleaved.map((c) => ({
+        ...c,
+        question: `Review · ${c.question}`,
+      }));
+      out.splice(insertAt, 0, ...tagged);
+    }
     return out;
-  }, [mod, interleaved]);
+  }, [mod, interleaved, generated, lessonSeed]);
   const total = items.length;
   const safeIdx = total > 0 ? Math.min(idx, total - 1) : 0;
   const item = items[safeIdx];

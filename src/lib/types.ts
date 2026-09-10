@@ -257,4 +257,8 @@ export interface UserProfile {
   totalCorrect: number;
   totalAttempts: number;
   adaptiveSessionsCompleted: number;
+  /** Recent Adaptive / Practice session seeds (avoid immediate identical pools). */
+  lastSessionSeeds?: string[];
+  /** Fingerprints of recently served generated/authored items. */
+  seenFingerprints?: string[];
 }

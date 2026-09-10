@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState, Suspense } from "react";
+import { useEffect, useMemo, useRef, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Nav } from "@/components/Nav";
 import { LessonItemView } from "@/components/LessonItems";
@@ -15,17 +15,20 @@ import {
   weakStates,
   weakTopics,
 } from "@/lib/adaptive";
+import { createSessionSeed } from "@/lib/sessionSeed";
 import { labelForTopic } from "@/lib/topics";
 
 function AdaptiveInner() {
   const search = useSearchParams();
   const topicParam = search.get("topic") || undefined;
   const stateParam = search.get("state") || undefined;
+  const freshParam = search.get("fresh") === "1";
   const {
     profile,
     attempt,
     completeItem,
     completeAdaptiveSession,
+    rememberSession,
     justUnlocked,
     clearUnlocks,
   } = useProfile();
@@ -40,7 +43,9 @@ function AdaptiveInner() {
   );
 
   const [sessionKey, setSessionKey] = useState(0);
-  const [session, setSession] = useState<ReturnType<typeof buildAdaptiveSession> | null>(null);
+  const [session, setSession] = useState<ReturnType<typeof buildAdaptiveSession> | null>(
+    null
+  );
   const [idx, setIdx] = useState(0);
   const [resolved, setResolved] = useState(false);
   const [finished, setFinished] = useState(false);
@@ -49,6 +54,7 @@ function AdaptiveInner() {
   const [results, setResults] = useState<{ id: string; correct: boolean; topics: string[] }[]>(
     []
   );
+  const rememberedForSeed = useRef<string | null>(null);
 
   useEffect(() => {
     if (!profile) return;
@@ -57,13 +63,25 @@ function AdaptiveInner() {
       snap[t] = profile.topicMastery[t].mastery;
     }
     setBeforeSnap(snap);
-    setSession(buildAdaptiveSession(profile, filter));
+    const seed = createSessionSeed(profile.name || "Associate");
+    const built = buildAdaptiveSession(profile, filter, seed);
+    setSession(built);
     setIdx(0);
     setResolved(false);
     setFinished(false);
     setResults([]);
+    rememberedForSeed.current = null;
     // eslint-disable-next-line react-hooks/exhaustive-deps -- explicit sessionKey / filter restart only
-  }, [sessionKey, topicParam, stateParam]);
+  }, [sessionKey, topicParam, stateParam, freshParam]);
+
+  // Persist seed + fingerprints once per built session (avoids immediate repeats)
+  useEffect(() => {
+    if (!session || !profile) return;
+    if (rememberedForSeed.current === session.seed) return;
+    rememberedForSeed.current = session.seed;
+    rememberSession(session.seed, session.fingerprints);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per session.seed
+  }, [session?.seed]);
 
   if (!profile || !session) return null;
 
@@ -99,7 +117,7 @@ function AdaptiveInner() {
           <div className="space-y-4">
             <p className="label-caps text-copper">Adaptive</p>
             <h1 className="font-serif-brand text-3xl text-ink">Session complete</h1>
-            <p className="text-muted">
+            <p className="text-sm text-muted">
               {results.filter((r) => r.correct).length}/{results.length} correct · mastery updated
               client-side (heuristic, not ML).
             </p>
@@ -182,8 +200,11 @@ function AdaptiveInner() {
         <div className="border-b border-[var(--hairline-light)] pb-4">
           <p className="text-sm font-medium text-ink">{session.reason}</p>
           <p className="mt-2 text-xs text-muted">
+            Session seeded · difficulty: {session.difficultyLabel} · fresh set
+          </p>
+          <p className="mt-2 text-xs text-muted">
             Wrong answers raise topic/state priority; correct answers raise mastery and space items
-            out. Client-side heuristics — no backend ML.
+            out. Procedural templates × jurisdictions — no paid LLM.
           </p>
           {!hasAdaptiveHistory(profile) && (
             <p className="mt-2 text-xs text-muted">
@@ -216,11 +237,18 @@ function AdaptiveInner() {
 
         <div>
           <div className="meter-track">
-            <div className="meter-fill meter-fill-copper" style={{ width: `${Math.min(100, progressPct)}%` }} />
+            <div
+              className="meter-fill meter-fill-copper"
+              style={{ width: `${Math.min(100, progressPct)}%` }}
+            />
           </div>
           <p className="mt-2 label-caps">
             Item {Math.min(idx + 1, total)} / {total}
-            {card?.source === "drill-snippet" ? " · drill snippet" : ""}
+            {card?.source === "drill-snippet"
+              ? " · drill snippet"
+              : card?.source === "generated"
+                ? " · generated"
+                : ""}
           </p>
         </div>
 

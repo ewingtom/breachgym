@@ -3,6 +3,7 @@ import { BADGES } from "@/data/badges";
 import { MODULES } from "@/data/modules";
 import { EXERCISES } from "@/data/exercises";
 import { bumpMastery, emptyMastery, resolveTopics } from "./adaptive";
+import { commitSessionMeta } from "./sessionSeed";
 
 const KEY = "breachgym_profile_v1";
 
@@ -29,6 +30,8 @@ export function defaultProfile(name = "Associate"): UserProfile {
     totalCorrect: 0,
     totalAttempts: 0,
     adaptiveSessionsCompleted: 0,
+    lastSessionSeeds: [],
+    seenFingerprints: [],
   };
 }
 
@@ -87,6 +90,8 @@ function normalizeProfile(p: UserProfile): UserProfile {
   p.adaptiveSessionsCompleted = p.adaptiveSessionsCompleted || 0;
   p.attemptsByTopic = p.attemptsByTopic || {};
   p.attemptsByState = p.attemptsByState || {};
+  p.lastSessionSeeds = p.lastSessionSeeds || [];
+  p.seenFingerprints = p.seenFingerprints || [];
   return p;
 }
 
@@ -206,6 +211,16 @@ export function markAdaptiveSessionComplete(profile: UserProfile): UserProfile {
     adaptiveSessionsCompleted: (profile.adaptiveSessionsCompleted || 0) + 1,
   });
 }
+
+/** Persist session seed + item fingerprints after building a fresh Adaptive / Practice set. */
+export function recordSessionFreshness(
+  profile: UserProfile,
+  seed: string,
+  fingerprints: string[]
+): UserProfile {
+  return normalizeProfile(commitSessionMeta(profile, seed, fingerprints));
+}
+
 
 export function markItemComplete(profile: UserProfile, itemId: string): UserProfile {
   if (profile.completedItems.includes(itemId)) return profile;

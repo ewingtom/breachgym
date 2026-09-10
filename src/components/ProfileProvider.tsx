@@ -23,6 +23,7 @@ import {
   newlyUnlockedBadges,
   recordAttempt,
   recordAttempts,
+  recordSessionFreshness,
   saveProfile,
   touchStreak,
 } from "@/lib/storage";
@@ -54,6 +55,8 @@ type ProfileApi = {
   completeLesson: (moduleId: string) => void;
   completeExercise: (exerciseId: string, bonusXp: number) => void;
   completeAdaptiveSession: (bonusXp?: number) => void;
+  /** Persist session seed + fingerprints so the next visit is fresh. */
+  rememberSession: (seed: string, fingerprints: string[]) => void;
 };
 
 const ProfileContext = createContext<ProfileApi | null>(null);
@@ -185,6 +188,12 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     [apply]
   );
 
+  const rememberSession = useCallback(
+    (seed: string, fingerprints: string[]) =>
+      apply((p) => recordSessionFreshness(p, seed, fingerprints)),
+    [apply]
+  );
+
   const clearUnlocks = useCallback(() => setJustUnlocked([]), []);
 
   const value = useMemo(
@@ -203,6 +212,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       completeLesson,
       completeExercise,
       completeAdaptiveSession,
+      rememberSession,
     }),
     [
       profile,
@@ -219,6 +229,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       completeLesson,
       completeExercise,
       completeAdaptiveSession,
+      rememberSession,
     ]
   );
 
