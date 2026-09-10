@@ -75,14 +75,14 @@ function ProgressContent() {
       : 0;
 
   return (
-    <div className="min-h-screen pb-16">
+    <div className="page-limestone pb-16">
       <Nav />
-      <main className="mx-auto max-w-5xl space-y-6 px-4 py-6">
+      <main className="mx-auto max-w-3xl space-y-8 px-4 py-8">
         <header>
-          <h1 className="text-3xl font-black text-slate-900">Progress & stats</h1>
-          <p className="text-slate-500">
-            Accuracy, weak areas, and mastery map. Mastery is a client-side heuristic
-            (accuracy + easiness − consecutive misses) used by Adaptive Review.
+          <h1 className="font-serif-brand text-3xl text-ink">Progress</h1>
+          <p className="mt-2 text-sm text-muted">
+            Accuracy, weak areas, and mastery. Mastery is a client-side heuristic used by Adaptive
+            Review.
           </p>
         </header>
 
@@ -94,30 +94,28 @@ function ProgressContent() {
         />
 
         {!hasHistory && (
-          <p className="rounded-2xl border border-violet-200 bg-violet-50 px-3 py-2 text-sm font-semibold text-violet-800">
+          <p className="text-sm text-muted">
             No miss history yet — Adaptive Review will seed a hard multi-state sampler.
           </p>
         )}
 
-        <div className="grid gap-4 sm:grid-cols-3">
-          <StatCard label="Overall accuracy" value={`${overall}%`} emoji="🎯" />
-          <StatCard
+        <div className="grid gap-6 border-y border-[var(--hairline-light)] py-5 sm:grid-cols-3">
+          <Stat label="Overall accuracy" value={`${overall}%`} />
+          <Stat
             label="Modules cleared"
             value={`${profile.completedLessons.length}/${MODULES.length}`}
-            emoji="📚"
           />
-          <StatCard
+          <Stat
             label="Exercises cleared"
             value={`${profile.completedExercises.length}/${EXERCISES.length}`}
-            emoji="🧪"
           />
         </div>
 
-        <section className="card">
-          <h2 className="font-black text-slate-800">Accuracy by topic</h2>
-          <div className="mt-3 space-y-2">
+        <section>
+          <h2 className="font-serif-brand text-lg text-ink">Accuracy by topic</h2>
+          <div className="mt-3 space-y-3">
             {Object.keys(profile.attemptsByTopic).length === 0 && (
-              <p className="text-sm text-slate-500">Complete a few items to unlock topic stats.</p>
+              <p className="text-sm text-muted">Complete a few items to unlock topic stats.</p>
             )}
             {Object.entries(profile.attemptsByTopic).map(([topic, v]) => {
               const pct = v.total ? Math.round((v.correct / v.total) * 100) : 0;
@@ -128,68 +126,66 @@ function ProgressContent() {
           </div>
         </section>
 
-        <section className="card">
-          <h2 className="font-black text-slate-800">Accuracy by state</h2>
-          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+        <section>
+          <h2 className="font-serif-brand text-lg text-ink">Accuracy by state</h2>
+          <ul className="mt-3 divide-y divide-[var(--hairline-light)] border-y border-[var(--hairline-light)]">
             {STATES.map((s) => {
               const v = profile.attemptsByState[s.code];
               const pct = v?.total ? Math.round((v.correct / v.total) * 100) : null;
               return (
-                <div
+                <li
                   key={s.code}
-                  className="flex items-center justify-between rounded-2xl bg-slate-50 px-3 py-2 text-sm"
+                  className="flex items-center justify-between py-2.5 text-sm"
                 >
-                  <span className="font-bold text-slate-700">
+                  <span className="text-ink">
                     {s.code} · {s.name}
                   </span>
-                  <span className="font-black text-slate-500">
-                    {pct === null ? "—" : `${pct}%`}
-                  </span>
-                </div>
+                  <span className="text-muted">{pct === null ? "—" : `${pct}%`}</span>
+                </li>
               );
             })}
-          </div>
+          </ul>
         </section>
 
-        <section className="grid gap-4 sm:grid-cols-2">
-          <div className="card border-rose-100">
-            <h2 className="font-black text-rose-700">Weak topics</h2>
+        <section className="grid gap-8 sm:grid-cols-2">
+          <div>
+            <h2 className="font-serif-brand text-lg text-ink">Weak topics</h2>
             {weakTopics.length === 0 ? (
-              <p className="mt-2 text-sm text-slate-500">No weak topics yet — miss some questions or keep drilling.</p>
+              <p className="mt-2 text-sm text-muted">No weak topics yet.</p>
             ) : (
               <ul className="mt-2 space-y-2 text-sm">
                 {weakTopics.map((t) => (
-                  <li key={t.topic} className="flex items-center justify-between gap-2 font-semibold text-slate-700">
-                    <span>
-                      {t.label} — mastery {t.mastery}
+                  <li key={t.topic} className="flex items-center justify-between gap-2">
+                    <span className="text-ink">
+                      {t.label} — {t.mastery}
                     </span>
                     <Link
                       href={`/adaptive?topic=${encodeURIComponent(t.topic)}`}
-                      className="shrink-0 rounded-full bg-rose-500 px-3 py-1 text-xs font-black text-white"
+                      className="link-copper shrink-0 text-xs"
                     >
-                      Train this
+                      Train weak spots
                     </Link>
                   </li>
                 ))}
               </ul>
             )}
           </div>
-          <div className="card border-amber-100">
-            <h2 className="font-black text-amber-700">Weak states</h2>
+          <div>
+            <h2 className="font-serif-brand text-lg text-ink">Weak states</h2>
             {weakStates.length === 0 ? (
-              <p className="mt-2 text-sm text-slate-500">No weak states yet — none below mastery threshold with enough tries.</p>
+              <p className="mt-2 text-sm text-muted">No weak states yet.</p>
             ) : (
               <ul className="mt-2 space-y-2 text-sm">
                 {weakStates.map((t) => (
-                  <li key={t.code} className="flex items-center justify-between gap-2 font-semibold text-slate-700">
-                    <span>
-                      {t.code} — mastery {t.mastery}
+                  <li key={t.code} className="flex items-center justify-between gap-2">
+                    <span className="text-ink">
+                      {t.code} — {t.mastery}
                     </span>
                     <Link
                       href={`/adaptive?state=${encodeURIComponent(t.code)}`}
-                      className="shrink-0 rounded-full bg-amber-500 px-3 py-1 text-xs font-black text-white"
+                      className="link-copper shrink-0 text-xs"
                     >
-                      Train this
+                      Train weak spots
                     </Link>
                   </li>
                 ))}
@@ -198,12 +194,12 @@ function ProgressContent() {
           </div>
         </section>
 
-        <div className="flex flex-wrap gap-2">
-          <Link href="/adaptive" className="btn-coral inline-flex">
-            🧠 Adaptive Review
+        <div className="flex flex-wrap gap-3">
+          <Link href="/adaptive" className="link-copper text-sm">
+            Train weak spots →
           </Link>
-          <Link href="/dashboard" className="btn-primary inline-flex">
-            Keep training
+          <Link href="/dashboard" className="text-sm text-muted hover:text-ink">
+            Dashboard
           </Link>
         </div>
         <Disclaimer />
@@ -220,22 +216,11 @@ export default function ProgressPage() {
   );
 }
 
-function StatCard({
-  label,
-  value,
-  emoji,
-}: {
-  label: string;
-  value: string;
-  emoji: string;
-}) {
+function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="card flex items-center gap-3">
-      <span className="text-3xl">{emoji}</span>
-      <div>
-        <div className="text-xs font-bold uppercase tracking-wide text-slate-400">{label}</div>
-        <div className="text-2xl font-black text-slate-800">{value}</div>
-      </div>
+    <div>
+      <div className="label-caps">{label}</div>
+      <div className="mt-1 font-serif-brand text-2xl text-ink">{value}</div>
     </div>
   );
 }
@@ -251,17 +236,14 @@ function BarRow({
 }) {
   return (
     <div>
-      <div className="mb-1 flex justify-between text-xs font-bold uppercase tracking-wide text-slate-500">
-        <span>{label}</span>
+      <div className="mb-1 flex justify-between text-xs text-muted">
+        <span className="uppercase tracking-[0.08em]">{label}</span>
         <span>
           {pct}% · {detail}
         </span>
       </div>
-      <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-        <div
-          className="h-full rounded-full bg-gradient-to-r from-violet-400 to-fuchsia-400"
-          style={{ width: `${pct}%` }}
-        />
+      <div className="meter-track">
+        <div className="meter-fill" style={{ width: `${pct}%` }} />
       </div>
     </div>
   );

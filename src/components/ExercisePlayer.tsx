@@ -45,7 +45,7 @@ export function ExercisePlayer({
       return <AcquireExercise ex={exercise} onFinished={onFinished} />;
     default:
       return (
-        <p className="font-bold text-rose-700">
+        <p className="font-medium text-miss">
           Unknown exercise type. Return to the dashboard and reopen the drill.
         </p>
       );
@@ -54,7 +54,6 @@ export function ExercisePlayer({
 
 function Shell({
   title,
-  emoji,
   children,
 }: {
   title: string;
@@ -63,12 +62,36 @@ function Shell({
 }) {
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-3">
-        <span className="text-4xl">{emoji}</span>
-        <h1 className="text-2xl font-black text-slate-800 sm:text-3xl">{title}</h1>
-      </div>
+      <h1 className="font-serif-brand text-2xl text-ink sm:text-3xl">{title}</h1>
       {children}
     </div>
+  );
+}
+
+function SelectChip({
+  active,
+  disabled,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  disabled?: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={onClick}
+      className={`rounded-sm px-3 py-1.5 text-sm font-medium transition ${
+        active
+          ? "border border-copper bg-[rgba(184,115,51,0.1)] text-ink"
+          : "border border-[var(--hairline-light)] bg-ivory text-muted hover:text-ink"
+      }`}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -92,13 +115,14 @@ function NotifyExercise({
 
   return (
     <Shell title={ex.title} emoji={ex.emoji}>
-      <p className="text-slate-600">{ex.subtitle}</p>
-      <div className="rounded-3xl border-2 border-slate-200 bg-slate-50 p-4 font-mono text-sm leading-relaxed text-slate-700 whitespace-pre-wrap">
+      <p className="text-muted">{ex.subtitle}</p>
+      <div className="rounded-sm border border-[var(--hairline-light)] bg-limestone p-4 font-mono text-sm leading-relaxed text-ink whitespace-pre-wrap">
         {ex.clientEmail}
       </div>
-      <p className="text-sm font-semibold text-slate-500">{ex.factPattern}</p>
-      <p className="font-bold text-slate-800">
-        For each state: Notify now, or investigate/document first (notice not automatic)? Teaching key — &quot;Not automatic&quot; is not a clean no-notice.
+      <p className="text-sm text-muted">{ex.factPattern}</p>
+      <p className="font-medium text-ink">
+        For each state: Notify now, or investigate/document first (notice not automatic)? Teaching
+        key — &quot;Not automatic&quot; is not a clean no-notice.
       </p>
       <div className="grid gap-2">
         {ex.states.map((code) => {
@@ -106,39 +130,41 @@ function NotifyExercise({
           return (
             <div
               key={code}
-              className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border-2 border-emerald-100 bg-white px-4 py-3"
+              className="flex flex-wrap items-center justify-between gap-2 rounded-sm border border-[var(--hairline-light)] bg-ivory px-4 py-3"
             >
               <div>
-                <div className="font-black text-slate-800">
-                  {st.name} <span className="text-slate-400">({code})</span>
+                <div className="font-medium text-ink">
+                  {st.name} <span className="text-muted">({code})</span>
                 </div>
-                <div className="text-xs text-slate-500">{st.statuteHint}</div>
+                <div className="text-xs text-muted">{st.statuteHint}</div>
               </div>
               <div className="flex gap-2">
                 {[true, false].map((val) => (
-                  <button
+                  <SelectChip
                     key={String(val)}
                     disabled={submitted}
+                    active={guesses[code] === val}
                     onClick={() => setGuesses((g) => ({ ...g, [code]: val }))}
-                    className={`rounded-full px-4 py-1.5 text-sm font-bold ${
-                      guesses[code] === val
-                        ? val
-                          ? "bg-emerald-500 text-white"
-                          : "bg-amber-500 text-white"
-                        : "bg-slate-100 text-slate-600"
-                    }`}
                   >
                     {val ? "Notify" : "Investigate first"}
-                  </button>
+                  </SelectChip>
                 ))}
               </div>
               {submitted && (
                 <div className="w-full text-sm">
-                  <span className={guesses[code] === ex.answers[code] ? "text-emerald-700 font-bold" : "text-rose-700 font-bold"}>
+                  <span
+                    className={
+                      guesses[code] === ex.answers[code]
+                        ? "font-medium text-ok"
+                        : "font-medium text-miss"
+                    }
+                  >
                     {guesses[code] === ex.answers[code] ? "✓" : "✗"} Key:{" "}
-                    {ex.answers[code] ? "Notify" : "Investigate/document first (notice not automatic)"}
+                    {ex.answers[code]
+                      ? "Notify"
+                      : "Investigate/document first (notice not automatic)"}
                   </span>
-                  <p className="mt-1 text-slate-600">{ex.explanations[code] || ""}</p>
+                  <p className="mt-1 text-muted">{ex.explanations[code] || ""}</p>
                 </div>
               )}
             </div>
@@ -191,33 +217,36 @@ function HarborExercise({
 
   return (
     <Shell title={ex.title} emoji={ex.emoji}>
-      <p className="rounded-3xl border-2 border-sky-100 bg-sky-50 p-4 text-slate-700">{ex.scenario}</p>
-      <p className="font-bold">Does encryption safe harbor likely apply? (Yes = harbor / No = still in play)</p>
+      <p className="rounded-sm border border-[var(--hairline-light)] bg-limestone p-4 text-ink">
+        {ex.scenario}
+      </p>
+      <p className="font-medium text-ink">
+        Does encryption safe harbor likely apply? (Yes = harbor / No = still in play)
+      </p>
       <div className="grid gap-2">
         {ex.states.map((code) => (
-          <div key={code} className="rounded-2xl border-2 border-sky-100 bg-white px-4 py-3">
+          <div
+            key={code}
+            className="rounded-sm border border-[var(--hairline-light)] bg-ivory px-4 py-3"
+          >
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="font-black">{STATE_MAP[code].name}</div>
+              <div className="font-medium text-ink">{STATE_MAP[code].name}</div>
               <div className="flex gap-2">
                 {[true, false].map((val) => (
-                  <button
+                  <SelectChip
                     key={String(val)}
                     disabled={submitted}
-                    className={`rounded-full px-3 py-1 text-sm font-bold ${
-                      guesses[code] === val
-                        ? "bg-sky-500 text-white"
-                        : "bg-slate-100"
-                    }`}
+                    active={guesses[code] === val}
                     onClick={() => setGuesses((g) => ({ ...g, [code]: val }))}
                   >
                     {val ? "Harbor yes" : "Harbor no"}
-                  </button>
+                  </SelectChip>
                 ))}
               </div>
             </div>
             {submitted && (
-              <p className="mt-2 text-sm text-slate-600">
-                <span className="font-bold">
+              <p className="mt-2 text-sm text-muted">
+                <span className="font-medium text-ink">
                   {guesses[code] === ex.answers[code] ? "✓" : "✗"}{" "}
                   {ex.answers[code] ? "Harbor likely" : "No full harbor"}
                 </span>{" "}
@@ -303,35 +332,41 @@ function PiExercise({
 
   return (
     <Shell title={ex.title} emoji={ex.emoji}>
-      <p className="rounded-3xl bg-violet-50 border-2 border-violet-100 p-4 text-slate-700">{ex.scenario}</p>
+      <p className="rounded-sm border border-[var(--hairline-light)] bg-limestone p-4 text-ink">
+        {ex.scenario}
+      </p>
       {phase === 1 && (
         <>
-          <p className="font-bold">
-            Select which field indices most clearly put each state&apos;s PI definition in play (teaching key). Select none if classic PI likely not triggered — a password hash is fact-dependent, not an automatic fire.
+          <p className="font-medium text-ink">
+            Select which field indices most clearly put each state&apos;s PI definition in play
+            (teaching key). Select none if classic PI likely not triggered — a password hash is
+            fact-dependent, not an automatic fire.
           </p>
-          <div className="flex flex-wrap gap-2 text-xs font-semibold text-slate-500">
+          <div className="flex flex-wrap gap-2 text-xs text-muted">
             {ex.fields.map((f, i) => (
-              <span key={i} className="rounded-full bg-slate-100 px-2 py-1">
+              <span
+                key={i}
+                className="rounded-sm border border-[var(--hairline-light)] px-2 py-1"
+              >
                 {i}: {f}
               </span>
             ))}
           </div>
           {ex.states.map((code) => (
-            <div key={code} className="rounded-2xl border-2 border-violet-100 bg-white p-3">
-              <div className="mb-2 font-black">{STATE_MAP[code].name}</div>
+            <div
+              key={code}
+              className="rounded-sm border border-[var(--hairline-light)] bg-ivory p-3"
+            >
+              <div className="mb-2 font-medium text-ink">{STATE_MAP[code].name}</div>
               <div className="flex flex-wrap gap-2">
                 {ex.fields.map((f, i) => (
-                  <button
+                  <SelectChip
                     key={i}
+                    active={(selected[code] || []).includes(i)}
                     onClick={() => toggle(code, i)}
-                    className={`rounded-full px-3 py-1 text-xs font-bold ${
-                      (selected[code] || []).includes(i)
-                        ? "bg-violet-500 text-white"
-                        : "bg-slate-100 text-slate-600"
-                    }`}
                   >
                     {i}: {f}
-                  </button>
+                  </SelectChip>
                 ))}
               </div>
             </div>
@@ -343,10 +378,10 @@ function PiExercise({
       )}
       {phase >= 2 && (
         <>
-          <div className="rounded-2xl border-2 border-emerald-200 bg-emerald-50 p-3 text-sm">
-            <div className="font-black">Teaching key — fields in play</div>
+          <div className="rounded-sm border border-[var(--hairline-light)] bg-limestone p-3 text-sm">
+            <div className="label-caps mb-2">Teaching key — fields in play</div>
             {ex.states.map((code) => (
-              <div key={code}>
+              <div key={code} className="text-ink">
                 {code}:{" "}
                 {(ex.triggers[code] || []).length
                   ? (ex.triggers[code] || []).map((i) => ex.fields[i]).join(", ")
@@ -354,20 +389,20 @@ function PiExercise({
               </div>
             ))}
           </div>
-          <p className="font-bold">Select all accurate analysis statements:</p>
+          <p className="font-medium text-ink">Select all accurate analysis statements:</p>
           {ex.analysisChoices.map((c) => (
             <label
               key={c.id}
-              className="flex cursor-pointer items-start gap-3 rounded-2xl border-2 border-slate-200 bg-white p-3"
+              className="flex cursor-pointer items-start gap-3 rounded-sm border border-[var(--hairline-light)] bg-ivory p-3"
             >
               <input
                 type="checkbox"
                 disabled={phase === 3}
                 checked={!!choices[c.id]}
                 onChange={(e) => setChoices((ch) => ({ ...ch, [c.id]: e.target.checked }))}
-                className="mt-1"
+                className="mt-1 accent-[var(--copper)]"
               />
-              <span className="font-semibold text-slate-700">{c.text}</span>
+              <span className="text-sm font-medium text-ink">{c.text}</span>
             </label>
           ))}
           {phase === 2 && (
@@ -435,53 +470,55 @@ function AcquireExercise({
 
   return (
     <Shell title={ex.title} emoji={ex.emoji}>
-      <p className="rounded-3xl border-2 border-amber-100 bg-amber-50 p-4 text-slate-700">{ex.scenario}</p>
-      <h2 className="text-lg font-black">{ex.question}</h2>
+      <p className="rounded-sm border border-[var(--hairline-light)] bg-limestone p-4 text-ink">
+        {ex.scenario}
+      </p>
+      <h2 className="font-serif-brand text-lg text-ink">{ex.question}</h2>
       <div className="grid gap-2">
-        {ex.options.map((o, i) => (
-          <button
-            key={i}
-            disabled={p1 !== null}
-            className={`rounded-2xl border-2 px-4 py-3 text-left font-semibold ${
-              p1 === null
-                ? "border-slate-200 bg-white"
-                : i === ex.correctIndex
-                  ? "border-emerald-500 bg-emerald-50"
-                  : i === p1
-                    ? "border-rose-400 bg-rose-50"
-                    : "opacity-50"
-            }`}
-            onClick={() => setP1(i)}
-          >
-            {o}
-          </button>
-        ))}
+        {ex.options.map((o, i) => {
+          let cls = "choice";
+          if (p1 !== null) {
+            if (i === ex.correctIndex) cls = "choice choice-correct";
+            else if (i === p1) cls = "choice choice-miss";
+            else cls += " opacity-50";
+          }
+          return (
+            <button
+              key={i}
+              disabled={p1 !== null}
+              className={cls}
+              onClick={() => setP1(i)}
+            >
+              {o}
+            </button>
+          );
+        })}
       </div>
-      {p1 !== null && <FeedbackPanel correct={p1 === ex.correctIndex} explanation={ex.explanation} />}
+      {p1 !== null && (
+        <FeedbackPanel correct={p1 === ex.correctIndex} explanation={ex.explanation} />
+      )}
       {p1 !== null && ex.followUp && (
         <>
-          <h2 className="text-lg font-black">{ex.followUp.question}</h2>
+          <h2 className="font-serif-brand text-lg text-ink">{ex.followUp.question}</h2>
           <div className="grid gap-2">
-            {ex.followUp.options.map((o, i) => (
-              <button
-                key={i}
-                disabled={p2 !== null}
-                className={`rounded-2xl border-2 px-4 py-3 text-left font-semibold ${
-                  p2 === null
-                    ? "border-slate-200 bg-white"
-                    : i === ex.followUp!.correctIndex
-                      ? "border-emerald-500 bg-emerald-50"
-                      : i === p2
-                        ? "border-rose-400 bg-rose-50"
-                        : "opacity-50"
-                }`}
-                onClick={() => {
-                  setP2(i);
-                }}
-              >
-                {o}
-              </button>
-            ))}
+            {ex.followUp.options.map((o, i) => {
+              let cls = "choice";
+              if (p2 !== null) {
+                if (i === ex.followUp!.correctIndex) cls = "choice choice-correct";
+                else if (i === p2) cls = "choice choice-miss";
+                else cls += " opacity-50";
+              }
+              return (
+                <button
+                  key={i}
+                  disabled={p2 !== null}
+                  className={cls}
+                  onClick={() => setP2(i)}
+                >
+                  {o}
+                </button>
+              );
+            })}
           </div>
           {p2 !== null && (
             <FeedbackPanel

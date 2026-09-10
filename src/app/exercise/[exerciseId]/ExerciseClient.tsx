@@ -22,8 +22,8 @@ function ExerciseContent() {
 
   if (!exercise) {
     return (
-      <main className="mx-auto max-w-lg p-10 text-center">
-        <p className="font-black">Exercise not found</p>
+      <main className="page-limestone mx-auto flex max-w-lg flex-col items-center p-10 text-center">
+        <p className="font-semibold text-ink">Exercise not found</p>
         <Link href="/dashboard" className="btn-primary mt-4 inline-flex">
           Back
         </Link>
@@ -32,21 +32,21 @@ function ExerciseContent() {
   }
 
   return (
-    <div className="min-h-screen pb-16">
+    <div className="page-limestone pb-16">
       <Nav />
       <BadgeUnlockToast ids={justUnlocked} onClear={clearUnlocks} />
       <Celebration
         show={celebrate}
         kind="complete"
-        title="Drill complete!"
+        title="Drill complete"
         subtitle={score ? `${score.correct}/${score.total} teaching checks` : undefined}
         onClose={() => setCelebrate(false)}
       />
-      <main className="mx-auto max-w-2xl space-y-4 px-4 py-6">
-        <Link href="/dashboard" className="text-sm font-bold text-slate-500 hover:text-emerald-600">
+      <main className="mx-auto max-w-2xl space-y-4 px-4 py-8">
+        <Link href="/dashboard" className="text-sm text-muted hover:text-ink">
           ← Dashboard
         </Link>
-        <div className="card">
+        <div className="rounded-sm border border-[var(--hairline-light)] bg-ivory p-5">
           <ExercisePlayer
             exercise={exercise}
             onFinished={(s) => {
@@ -76,13 +76,13 @@ function ExerciseContent() {
           />
         </div>
         {done && score && (
-          <div className="card flex flex-wrap items-center justify-between gap-3 border-emerald-200 bg-emerald-50">
+          <div className="flex flex-wrap items-center justify-between gap-3 border border-[var(--hairline-light)] bg-ivory px-4 py-3">
             <div>
-              <div className="font-black text-emerald-900">
+              <div className="font-semibold text-ink">
                 Score {score.correct}/{score.total}
               </div>
-              <p className="text-sm text-emerald-800">
-                Re-read the teaching explanations above — that&apos;s the learning.
+              <p className="text-sm text-muted">
+                Re-read the teaching explanations above — that is the learning.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -90,7 +90,7 @@ function ExerciseContent() {
                 Retry
               </button>
               <Link href="/dashboard" className="btn-primary text-sm">
-                Skill tree
+                Dashboard
               </Link>
               <Link href="/progress" className="btn-secondary text-sm">
                 Progress

@@ -92,23 +92,23 @@ function AdaptiveInner() {
       .slice(0, 5);
 
     return (
-      <div className="min-h-screen pb-16">
+      <div className="page-limestone pb-16">
         <Nav />
         <BadgeUnlockToast ids={justUnlocked} onClear={clearUnlocks} />
-        <main className="mx-auto max-w-2xl space-y-4 px-4 py-6">
-          <div className="card space-y-4 text-center">
-            <div className="text-5xl">🧠</div>
-            <h1 className="text-3xl font-black text-slate-900">Workout complete</h1>
-            <p className="text-slate-600">
+        <main className="mx-auto max-w-2xl space-y-6 px-4 py-8">
+          <div className="space-y-4">
+            <p className="label-caps text-copper">Adaptive</p>
+            <h1 className="font-serif-brand text-3xl text-ink">Session complete</h1>
+            <p className="text-muted">
               {results.filter((r) => r.correct).length}/{results.length} correct · mastery updated
               client-side (heuristic, not ML).
             </p>
             {improved.length > 0 && (
-              <div className="rounded-2xl bg-emerald-50 p-3 text-left text-sm">
-                <div className="font-black text-emerald-800">Improved</div>
-                <ul className="mt-1 space-y-1">
+              <div className="border-t border-[var(--hairline-light)] pt-3 text-sm">
+                <div className="label-caps">Improved</div>
+                <ul className="mt-2 space-y-1">
                   {improved.map((r) => (
-                    <li key={r.topic} className="font-semibold text-emerald-900">
+                    <li key={r.topic} className="text-ink">
                       {labelForTopic(r.topic)}: {r.before} → {r.after}
                     </li>
                   ))}
@@ -116,17 +116,17 @@ function AdaptiveInner() {
               </div>
             )}
             {stillWeak.length > 0 && (
-              <div className="rounded-2xl bg-rose-50 p-3 text-left text-sm">
-                <div className="font-black text-rose-800">Still weak</div>
-                <ul className="mt-1 space-y-1">
+              <div className="border-t border-[var(--hairline-light)] pt-3 text-sm">
+                <div className="label-caps">Still weak</div>
+                <ul className="mt-2 space-y-2">
                   {stillWeak.map((r) => (
                     <li key={r.topic} className="flex items-center justify-between gap-2">
-                      <span className="font-semibold text-rose-900">
+                      <span className="text-ink">
                         {r.label} · mastery {r.mastery}
                       </span>
                       <Link
                         href={`/adaptive?topic=${encodeURIComponent(r.topic)}`}
-                        className="text-xs font-black text-rose-700 underline"
+                        className="link-copper text-xs"
                         onClick={() => {
                           setFinished(false);
                           setSessionKey((k) => k + 1);
@@ -142,14 +142,14 @@ function AdaptiveInner() {
                 </ul>
               </div>
             )}
-            <div className="flex flex-wrap justify-center gap-2">
-              <button className="btn-coral" onClick={startSession}>
-                Another workout
+            <div className="flex flex-wrap gap-2 pt-2">
+              <button className="btn-primary" onClick={startSession}>
+                Another session
               </button>
               <Link href="/progress" className="btn-secondary">
                 Progress
               </Link>
-              <Link href="/dashboard" className="btn-primary">
+              <Link href="/dashboard" className="btn-ghost">
                 Dashboard
               </Link>
             </div>
@@ -161,7 +161,7 @@ function AdaptiveInner() {
   }
 
   return (
-    <div className="min-h-screen pb-16">
+    <div className="page-limestone pb-16">
       <Nav />
       <BadgeUnlockToast ids={justUnlocked} onClear={clearUnlocks} />
       <Celebration
@@ -171,30 +171,27 @@ function AdaptiveInner() {
         subtitle="+XP · mastery updated"
         onClose={() => setCelebrate(false)}
       />
-      <main className="mx-auto max-w-2xl space-y-4 px-4 py-6">
+      <main className="mx-auto max-w-2xl space-y-5 px-4 py-8">
         <div className="flex items-center justify-between gap-3">
-          <Link href="/dashboard" className="text-sm font-bold text-slate-500 hover:text-emerald-600">
+          <Link href="/dashboard" className="text-sm text-muted hover:text-ink">
             ← Dashboard
           </Link>
-          <div className="text-sm font-black text-slate-700">🧠 Adaptive Review</div>
+          <div className="label-caps text-copper">Adaptive Review</div>
         </div>
 
-        <div className="card border-fuchsia-200 bg-gradient-to-r from-fuchsia-50 to-violet-50">
-          <div className="text-xs font-black uppercase tracking-wide text-fuchsia-700">
-            Weak Spot Workout
-          </div>
-          <p className="mt-1 text-sm font-semibold text-slate-700">{session.reason}</p>
-          <p className="mt-2 text-xs text-slate-500">
-            Scoring: wrong answers raise topic/state priority and cut easiness; correct answers raise
-            mastery and space items out. All client-side heuristics — no backend ML.
+        <div className="border-b border-[var(--hairline-light)] pb-4">
+          <p className="text-sm font-medium text-ink">{session.reason}</p>
+          <p className="mt-2 text-xs text-muted">
+            Wrong answers raise topic/state priority; correct answers raise mastery and space items
+            out. Client-side heuristics — no backend ML.
           </p>
           {!hasAdaptiveHistory(profile) && (
-            <p className="mt-2 text-xs font-bold text-violet-700">
+            <p className="mt-2 text-xs text-muted">
               Cold start: hard multi-state sampler (not Foundations trivia).
             </p>
           )}
           {(topicParam || stateParam) && (
-            <p className="mt-2 text-xs font-bold text-fuchsia-800">
+            <p className="mt-2 text-xs font-semibold text-copper">
               Filter: {topicParam ? labelForTopic(topicParam) : ""}
               {topicParam && stateParam ? " · " : ""}
               {stateParam || ""}
@@ -203,33 +200,32 @@ function AdaptiveInner() {
         </div>
 
         {(weakT.length > 0 || weakS.length > 0) && idx === 0 && !resolved && (
-          <div className="grid gap-2 sm:grid-cols-2">
+          <ul className="space-y-1 text-xs text-muted">
             {weakT.slice(0, 3).map((t) => (
-              <div key={t.topic} className="rounded-2xl bg-rose-50 px-3 py-2 text-xs font-bold text-rose-800">
+              <li key={t.topic}>
                 Weak topic: {t.label} ({t.mastery})
-              </div>
+              </li>
             ))}
             {weakS.slice(0, 3).map((s) => (
-              <div key={s.code} className="rounded-2xl bg-amber-50 px-3 py-2 text-xs font-bold text-amber-800">
+              <li key={s.code}>
                 Weak state: {s.code} ({s.mastery})
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         )}
 
-        <div className="h-3 overflow-hidden rounded-full bg-slate-200">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-fuchsia-400 to-violet-500 transition-all"
-            style={{ width: `${Math.min(100, progressPct)}%` }}
-          />
+        <div>
+          <div className="meter-track">
+            <div className="meter-fill meter-fill-copper" style={{ width: `${Math.min(100, progressPct)}%` }} />
+          </div>
+          <p className="mt-2 label-caps">
+            Item {Math.min(idx + 1, total)} / {total}
+            {card?.source === "drill-snippet" ? " · drill snippet" : ""}
+          </p>
         </div>
-        <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
-          Item {Math.min(idx + 1, total)} / {total}
-          {card?.source === "drill-snippet" ? " · drill snippet" : ""}
-        </p>
 
         {card && (
-          <div className="card">
+          <div className="rounded-sm border border-[var(--hairline-light)] bg-ivory p-5">
             <LessonItemView
               key={`${sessionKey}-${card.id}`}
               item={card}
@@ -253,7 +249,7 @@ function AdaptiveInner() {
             {resolved && (
               <div className="mt-6 flex justify-end">
                 <button
-                  className="btn-coral"
+                  className="btn-primary"
                   onClick={() => {
                     if (idx + 1 >= total) {
                       completeAdaptiveSession(30);
@@ -264,7 +260,7 @@ function AdaptiveInner() {
                     }
                   }}
                 >
-                  {idx + 1 >= total ? "Finish workout" : "Next"}
+                  {idx + 1 >= total ? "Finish" : "Continue"}
                 </button>
               </div>
             )}
@@ -281,8 +277,8 @@ function AdaptiveContent() {
   return (
     <Suspense
       fallback={
-        <main className="flex min-h-screen items-center justify-center font-black text-fuchsia-600">
-          Loading workout…
+        <main className="page-limestone flex min-h-screen items-center justify-center text-sm text-muted">
+          Loading session…
         </main>
       }
     >

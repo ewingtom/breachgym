@@ -246,7 +246,7 @@ export function ProfileGate({ children }: { children: ReactNode }) {
 
   if (!ready) {
     return (
-      <main className="flex min-h-screen items-center justify-center font-black text-emerald-600">
+      <main className="shell-aubergine flex min-h-screen items-center justify-center text-sm text-muted">
         Loading…
       </main>
     );
@@ -254,10 +254,10 @@ export function ProfileGate({ children }: { children: ReactNode }) {
 
   if (!profile) {
     return (
-      <main className="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center gap-4 px-4 text-center">
-        <p className="font-black text-slate-800">No demo profile found</p>
-        <p className="text-sm text-slate-500">Redirecting to the start screen…</p>
-        <Link href="/" className="btn-primary">
+      <main className="shell-aubergine mx-auto flex min-h-screen max-w-md flex-col items-center justify-center gap-4 px-4 text-center">
+        <p className="font-semibold text-ivory">No demo profile found</p>
+        <p className="text-sm text-muted">Redirecting to the start screen…</p>
+        <Link href="/" className="btn-copper-outline">
           Enter BreachGym
         </Link>
       </main>

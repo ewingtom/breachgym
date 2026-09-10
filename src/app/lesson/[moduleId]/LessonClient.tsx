@@ -53,7 +53,7 @@ function LessonContent() {
     const insertAt = Math.min(2, Math.max(0, out.length - 1));
     const tagged = interleaved.map((c) => ({
       ...c,
-      question: `🔁 Review · ${c.question}`,
+      question: `Review · ${c.question}`,
     }));
     out.splice(insertAt, 0, ...tagged);
     return out;
@@ -72,8 +72,8 @@ function LessonContent() {
 
   if (!mod) {
     return (
-      <main className="mx-auto max-w-lg p-10 text-center">
-        <p className="font-black">Module not found</p>
+      <main className="page-limestone mx-auto flex max-w-lg flex-col items-center p-10 text-center">
+        <p className="font-semibold text-ink">Module not found</p>
         <Link href="/dashboard" className="btn-primary mt-4 inline-flex">
           Back
         </Link>
@@ -87,24 +87,21 @@ function LessonContent() {
       .map((id) => EXERCISE_MAP[id])
       .filter(Boolean);
     return (
-      <main className="mx-auto max-w-lg space-y-4 p-10 text-center">
-        <p className="text-4xl">🔒</p>
-        <h1 className="text-xl font-black text-slate-800">{mod.emoji} {mod.title}</h1>
-        <p className="font-bold text-slate-700">
+      <main className="page-limestone mx-auto flex max-w-lg flex-col gap-4 p-10 text-center">
+        <p className="label-caps">Locked</p>
+        <h1 className="font-serif-brand text-xl text-ink">{mod.title}</h1>
+        <p className="text-sm text-muted">
           {req || "Finish the previous module to unlock lessons."}
         </p>
-        <p className="text-sm text-slate-500">
-          Lessons stay gated in order. You can still open practice drills below (or use
-          &quot;Skip to advanced practice&quot; on the dashboard).
+        <p className="text-xs text-muted">
+          Lessons stay gated in order. Practice drills remain available below.
         </p>
         {drills.length > 0 && (
           <div className="flex flex-col gap-2 pt-2">
-            <p className="text-xs font-black uppercase tracking-wide text-violet-600">
-              Practice drills
-            </p>
+            <p className="label-caps">Practice drills</p>
             {drills.map((ex) => (
               <Link key={ex.id} href={`/exercise/${ex.id}`} className="btn-secondary text-sm">
-                {ex.emoji} {ex.title}
+                {ex.title}
               </Link>
             ))}
           </div>
@@ -117,37 +114,34 @@ function LessonContent() {
   }
 
   return (
-    <div className="min-h-screen pb-16">
+    <div className="page-limestone pb-16">
       <Nav />
       <BadgeUnlockToast ids={justUnlocked} onClear={clearUnlocks} />
       <Celebration
         show={showCelebrate}
         kind="correct"
-        title="Nice!"
-        subtitle={`+XP · keep the streak alive`}
+        title="Noted"
+        subtitle="+XP"
         onClose={() => setShowCelebrate(false)}
       />
-      <main className="mx-auto max-w-2xl space-y-4 px-4 py-6">
+      <main className="mx-auto max-w-2xl space-y-5 px-4 py-8">
         <div className="flex items-center justify-between gap-3">
-          <Link href="/dashboard" className="text-sm font-bold text-slate-500 hover:text-emerald-600">
+          <Link href="/dashboard" className="text-sm text-muted hover:text-ink">
             ← Dashboard
           </Link>
-          <div className="text-sm font-black text-slate-700">
-            {mod.emoji} {mod.title}
+          <div className="text-sm font-medium text-ink">{mod.title}</div>
+        </div>
+        <div>
+          <div className="meter-track">
+            <div className="meter-fill" style={{ width: `${Math.min(100, progressPct)}%` }} />
           </div>
+          <p className="mt-2 label-caps">
+            Item {Math.min(safeIdx + 1, total)} / {total}
+          </p>
         </div>
-        <div className="h-3 overflow-hidden rounded-full bg-slate-200">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-lime-400 transition-all"
-            style={{ width: `${Math.min(100, progressPct)}%` }}
-          />
-        </div>
-        <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
-          Item {Math.min(safeIdx + 1, total)} / {total}
-        </p>
 
         {!finished && item && (
-          <div className="card">
+          <div className="rounded-sm border border-[var(--hairline-light)] bg-ivory p-5">
             <LessonItemView
               key={item.id}
               item={item}
@@ -181,7 +175,7 @@ function LessonContent() {
                     }
                   }}
                 >
-                  {safeIdx + 1 >= total ? "Complete module" : "Next"}
+                  {safeIdx + 1 >= total ? "Complete module" : "Continue"}
                 </button>
               </div>
             )}
@@ -189,14 +183,14 @@ function LessonContent() {
         )}
 
         {finished && (
-          <div className="card space-y-4 text-center">
-            <div className="text-5xl">🎉</div>
-            <h1 className="text-3xl font-black text-slate-900">Module complete!</h1>
-            <p className="text-slate-600">
-              You cleared <strong>{mod.title}</strong>. Bonus XP applied.{" "}
+          <div className="space-y-4 border border-[var(--hairline-light)] bg-ivory p-6 text-center">
+            <p className="label-caps">Complete</p>
+            <h1 className="font-serif-brand text-3xl text-ink">Module finished</h1>
+            <p className="text-sm text-muted">
+              You cleared <strong className="text-ink">{mod.title}</strong>. Bonus XP applied.{" "}
               {moduleExerciseIds(mod).length
                 ? "Ready for the practical drill(s)?"
-                : "Check the skill tree for what's next."}
+                : "Check modules for what is next."}
             </p>
             <div className="flex flex-wrap justify-center gap-2">
               {moduleExerciseIds(mod).map((id) => {
@@ -204,12 +198,12 @@ function LessonContent() {
                 if (!ex) return null;
                 return (
                   <Link key={id} href={`/exercise/${id}`} className="btn-secondary">
-                    {ex.emoji} {ex.title}
+                    {ex.title}
                   </Link>
                 );
               })}
               <Link href="/dashboard" className="btn-primary">
-                Back to map
+                Dashboard
               </Link>
             </div>
           </div>

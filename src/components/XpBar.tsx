@@ -16,43 +16,33 @@ export function XpBar({
   const displayXp = Math.min(dailyXp, dailyGoal);
   const pct = Math.min(100, Math.round((dailyXp / dailyGoal) * 100));
   return (
-    <div className="grid gap-3 rounded-3xl border-2 border-emerald-100 bg-white p-4 shadow-sm sm:grid-cols-3">
-      <Stat emoji="💎" label="Total XP" value={xp.toLocaleString()} />
-      <div className="rounded-2xl bg-gradient-to-br from-emerald-50 to-teal-50 p-3">
-        <div className="mb-1 flex items-center justify-between text-xs font-bold uppercase tracking-wide text-emerald-700">
-          <span>Daily goal</span>
-          <span>
-            {met
-              ? overflow > 0
-                ? `Met (+${overflow} XP)`
-                : "Met ✓"
-              : `${displayXp}/${dailyGoal} XP`}
-          </span>
+    <div className="space-y-3 border-b border-[var(--hairline-light)] pb-4">
+      <div className="flex flex-wrap items-baseline justify-between gap-3 text-sm">
+        <div className="flex flex-wrap gap-6">
+          <div>
+            <div className="label-caps">Total XP</div>
+            <div className="mt-0.5 font-serif-brand text-xl text-ink">{xp.toLocaleString()}</div>
+          </div>
+          <div>
+            <div className="label-caps">Streak</div>
+            <div className="mt-0.5 font-serif-brand text-xl text-ink">
+              {streak} day{streak === 1 ? "" : "s"}
+            </div>
+          </div>
         </div>
-        <div className="h-3 overflow-hidden rounded-full bg-emerald-100">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-lime-400 transition-all duration-500"
-            style={{ width: `${pct}%` }}
-          />
+        <div className="text-right text-xs text-muted">
+          {met
+            ? overflow > 0
+              ? `Daily goal met · +${overflow} XP`
+              : "Daily goal met"
+            : `${displayXp} / ${dailyGoal} XP today`}
         </div>
-        {met && overflow > 0 && (
-          <p className="mt-1 text-[10px] font-semibold text-emerald-600">
-            Daily goal met · {dailyXp} XP today (goal {dailyGoal})
-          </p>
-        )}
       </div>
-      <Stat emoji="🔥" label="Streak" value={`${streak} day${streak === 1 ? "" : "s"}`} />
-    </div>
-  );
-}
-
-function Stat({ emoji, label, value }: { emoji: string; label: string; value: string }) {
-  return (
-    <div className="flex items-center gap-3 rounded-2xl bg-slate-50 p-3">
-      <span className="text-2xl">{emoji}</span>
-      <div>
-        <div className="text-xs font-bold uppercase tracking-wide text-slate-500">{label}</div>
-        <div className="text-xl font-black text-slate-800">{value}</div>
+      <div className="meter-track">
+        <div
+          className={`meter-fill ${met ? "meter-fill-copper" : ""}`}
+          style={{ width: `${pct}%` }}
+        />
       </div>
     </div>
   );

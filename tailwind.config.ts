@@ -9,29 +9,38 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        gym: {
-          green: "#58CC02",
-          greenDark: "#46A302",
-          coral: "#FF4B4B",
-          purple: "#CE82FF",
-          sky: "#1CB0F6",
-          gold: "#FFC800",
+        aubergine: {
+          DEFAULT: "#120C14",
+          raised: "#160F1A",
         },
+        limestone: "#F2EDE5",
+        ivory: "#F7F4EE",
+        copper: "#B87333",
+        ink: "#1A1518",
+        muted: "#8A8279",
+        ok: "#3D5C4A",
+        miss: "#7A3B3B",
+      },
+      fontFamily: {
+        serif: [
+          "ui-serif",
+          "Iowan Old Style",
+          "Source Serif 4",
+          "Source Serif Pro",
+          "Georgia",
+          "Times New Roman",
+          "serif",
+        ],
+        sans: ["var(--font-geist-sans)", "system-ui", "sans-serif"],
       },
       keyframes: {
-        "bounce-in": {
-          "0%": { transform: "scale(0.6) translateY(20px)", opacity: "0" },
-          "60%": { transform: "scale(1.05) translateY(0)", opacity: "1" },
-          "100%": { transform: "scale(1) translateY(0)", opacity: "1" },
-        },
-        wiggle: {
-          "0%, 100%": { transform: "rotate(-2deg)" },
-          "50%": { transform: "rotate(2deg)" },
+        "fade-in": {
+          "0%": { opacity: "0", transform: "translateY(6px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
         },
       },
       animation: {
-        "bounce-in": "bounce-in 0.45s ease-out",
-        wiggle: "wiggle 0.4s ease-in-out",
+        "fade-in": "fade-in 0.28s ease-out",
       },
     },
   },

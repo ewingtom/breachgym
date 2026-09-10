@@ -42,22 +42,10 @@ function Flashcard({
 
   return (
     <div className="space-y-4">
-      <button
-        type="button"
-        onClick={() => setFlipped((f) => !f)}
-        className="group w-full perspective"
-      >
-        <div
-          className={`relative min-h-[220px] w-full rounded-3xl border-4 border-white p-6 text-left shadow-xl transition-transform duration-500 ${
-            flipped
-              ? "bg-gradient-to-br from-violet-500 to-fuchsia-500 text-white"
-              : "bg-gradient-to-br from-emerald-400 to-teal-500 text-white"
-          }`}
-        >
-          <div className="mb-3 text-xs font-black uppercase tracking-widest opacity-80">
-            {flipped ? "Answer" : "Tap to flip"} · Flashcard
-          </div>
-          <div className="text-xl font-black leading-snug sm:text-2xl">
+      <button type="button" onClick={() => setFlipped((f) => !f)} className="w-full text-left">
+        <div className="min-h-[200px] w-full rounded-sm border border-[var(--hairline-light)] bg-limestone p-6">
+          <div className="label-caps mb-3">{flipped ? "Answer" : "Tap to reveal"} · Flashcard</div>
+          <div className="font-serif-brand text-xl leading-snug text-ink sm:text-2xl">
             {flipped ? item.back : item.front}
           </div>
         </div>
@@ -72,7 +60,7 @@ function Flashcard({
               onResolved(true);
             }}
           >
-            Got it (+XP)
+            Got it
           </button>
           <button
             className="btn-ghost"
@@ -82,7 +70,7 @@ function Flashcard({
               onResolved(false);
             }}
           >
-            Review again later
+            Review later
           </button>
         </div>
       )}
@@ -112,15 +100,16 @@ function Mcq({
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-black text-slate-800 sm:text-2xl">{item.question}</h2>
+      <h2 className="font-serif-brand text-xl text-ink sm:text-2xl">{item.question}</h2>
       <div className="grid gap-2">
         {item.options.map((opt, i) => {
-          let cls =
-            "rounded-2xl border-2 border-slate-200 bg-white px-4 py-3 text-left font-semibold text-slate-700 transition hover:border-emerald-300";
+          let cls = "choice";
           if (picked !== null) {
-            if (i === item.correctIndex) cls = "rounded-2xl border-2 border-emerald-500 bg-emerald-50 px-4 py-3 text-left font-semibold text-emerald-900";
-            else if (i === picked) cls = "rounded-2xl border-2 border-rose-400 bg-rose-50 px-4 py-3 text-left font-semibold text-rose-900";
-            else cls += " opacity-60";
+            if (i === item.correctIndex) cls = "choice choice-correct";
+            else if (i === picked) cls = "choice choice-miss";
+            else cls += " opacity-50";
+          } else if (picked === i) {
+            cls += " choice-selected";
           }
           return (
             <button
@@ -132,7 +121,7 @@ function Mcq({
                 onResolved(i === item.correctIndex);
               }}
             >
-              <span className="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-xs font-black">
+              <span className="mr-2 inline-flex h-5 w-5 items-center justify-center text-xs text-muted">
                 {String.fromCharCode(65 + i)}
               </span>
               {opt}
@@ -192,19 +181,19 @@ function FillBlank({
 
   return (
     <div className="space-y-4">
-      <p className="text-sm font-bold uppercase tracking-wide text-violet-600">{item.prompt}</p>
-      <div className="rounded-3xl border-2 border-violet-100 bg-violet-50/50 p-5 text-lg font-semibold leading-relaxed text-slate-800">
+      <p className="label-caps">{item.prompt}</p>
+      <div className="rounded-sm border border-[var(--hairline-light)] bg-limestone p-5 text-lg leading-relaxed text-ink">
         {parts.map((part, i) => (
           <span key={i}>
             {part}
             {i < item.blanks.length && (
               <input
-                className={`mx-1 inline-block w-36 rounded-xl border-2 bg-white px-2 py-1 text-center font-bold outline-none sm:w-44 ${
+                className={`mx-1 inline-block w-36 rounded-sm border bg-ivory px-2 py-1 text-center text-base outline-none sm:w-44 ${
                   checked
                     ? blankCorrect(i)
-                      ? "border-emerald-400 text-emerald-800"
-                      : "border-rose-400 text-rose-800"
-                    : "border-violet-300 text-violet-800 focus:border-violet-500"
+                      ? "border-ok text-ok"
+                      : "border-miss text-miss"
+                    : "border-[var(--hairline-light)] text-ink focus:border-copper"
                 }`}
                 value={values[i]}
                 disabled={checked}
@@ -257,16 +246,13 @@ function Narrative({
   if (step < totalStory) {
     return (
       <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <span className="text-4xl">{item.emoji}</span>
-          <div>
-            <div className="text-xs font-black uppercase tracking-widest text-rose-500">
-              Case file · {step + 1}/{totalStory}
-            </div>
-            <h2 className="text-2xl font-black text-slate-800">{item.title}</h2>
+        <div>
+          <div className="label-caps">
+            Case file · {step + 1}/{totalStory}
           </div>
+          <h2 className="mt-1 font-serif-brand text-2xl text-ink">{item.title}</h2>
         </div>
-        <p className="rounded-3xl border-2 border-rose-100 bg-white p-5 text-lg leading-relaxed text-slate-700 shadow-sm">
+        <p className="rounded-sm border border-[var(--hairline-light)] bg-limestone p-5 text-lg leading-relaxed text-ink">
           {item.story[step]}
         </p>
         <button className="btn-primary" onClick={() => setStep((s) => s + 1)}>
@@ -279,9 +265,9 @@ function Narrative({
   if (step === totalStory) {
     return (
       <div className="space-y-4">
-        <div className="rounded-3xl bg-gradient-to-br from-amber-300 to-orange-400 p-5 text-slate-900 shadow-lg">
-          <div className="text-xs font-black uppercase tracking-widest">Takeaway</div>
-          <p className="mt-2 text-lg font-bold">{item.takeaway}</p>
+        <div className="rounded-sm border border-[var(--hairline-light)] bg-limestone p-5">
+          <div className="label-caps">Takeaway</div>
+          <p className="mt-2 text-lg font-medium text-ink">{item.takeaway}</p>
         </div>
         <button className="btn-primary" onClick={() => setStep(totalStory + 1)}>
           Quick check →
@@ -295,29 +281,29 @@ function Narrative({
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-black text-slate-800">{q.question}</h2>
+      <h2 className="font-serif-brand text-xl text-ink">{q.question}</h2>
       <div className="grid gap-2">
-        {q.options.map((opt, i) => (
-          <button
-            key={i}
-            disabled={picked !== null}
-            className={`rounded-2xl border-2 px-4 py-3 text-left font-semibold ${
-              picked === null
-                ? "border-slate-200 bg-white hover:border-emerald-300"
-                : i === q.correctIndex
-                  ? "border-emerald-500 bg-emerald-50 text-emerald-900"
-                  : i === picked
-                    ? "border-rose-400 bg-rose-50"
-                    : "border-slate-100 opacity-50"
-            }`}
-            onClick={() => {
-              setPicked(i);
-              onResolved(i === q.correctIndex);
-            }}
-          >
-            {opt}
-          </button>
-        ))}
+        {q.options.map((opt, i) => {
+          let cls = "choice";
+          if (picked !== null) {
+            if (i === q.correctIndex) cls = "choice choice-correct";
+            else if (i === picked) cls = "choice choice-miss";
+            else cls += " opacity-50";
+          }
+          return (
+            <button
+              key={i}
+              disabled={picked !== null}
+              className={cls}
+              onClick={() => {
+                setPicked(i);
+                onResolved(i === q.correctIndex);
+              }}
+            >
+              {opt}
+            </button>
+          );
+        })}
       </div>
       {picked !== null && <FeedbackPanel correct={correct} explanation={q.explanation} />}
     </div>

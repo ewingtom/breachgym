@@ -13,38 +13,39 @@ function BadgesContent() {
   const unlocked = new Set(profile.badges);
 
   return (
-    <div className="min-h-screen pb-16">
+    <div className="page-limestone pb-16">
       <Nav />
-      <main className="mx-auto max-w-5xl space-y-6 px-4 py-6">
+      <main className="mx-auto max-w-3xl space-y-8 px-4 py-8">
         <header>
-          <h1 className="text-3xl font-black text-slate-900">Badges</h1>
-          <p className="text-slate-500">
-            {profile.badges.length} / {BADGES.length} unlocked · keep drilling to collect them all
+          <h1 className="font-serif-brand text-3xl text-ink">Badges</h1>
+          <p className="mt-2 text-sm text-muted">
+            {profile.badges.length} / {BADGES.length} unlocked
           </p>
         </header>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <ul className="divide-y divide-[var(--hairline-light)] border-y border-[var(--hairline-light)]">
           {BADGES.map((b) => {
             const on = unlocked.has(b.id);
             return (
-              <div
-                key={b.id}
-                className={`card relative overflow-hidden ${
-                  on ? "border-amber-300 bg-gradient-to-br from-amber-50 to-yellow-50" : "opacity-70 grayscale"
-                }`}
-              >
-                <div className="text-4xl">{on ? b.emoji : "🔒"}</div>
-                <h2 className="mt-2 text-lg font-black text-slate-800">{b.name}</h2>
-                <p className="text-sm text-slate-600">{b.description}</p>
-                <div className="mt-3 text-xs font-black uppercase tracking-wide text-slate-400">
-                  {on ? "Unlocked" : "Locked"}
+              <li key={b.id} className={`py-4 ${on ? "" : "opacity-50"}`}>
+                <div className="flex items-baseline justify-between gap-3">
+                  <div>
+                    <h2 className="font-serif-brand text-lg text-ink">{b.name}</h2>
+                    <p className="mt-0.5 text-sm text-muted">{b.description}</p>
+                  </div>
+                  <span className="label-caps shrink-0">{on ? "Unlocked" : "Locked"}</span>
                 </div>
-              </div>
+              </li>
             );
           })}
+        </ul>
+        <div className="flex flex-wrap gap-4">
+          <Link href="/adaptive" className="link-copper text-sm">
+            Train weak spots →
+          </Link>
+          <Link href="/dashboard" className="text-sm text-muted hover:text-ink">
+            Dashboard
+          </Link>
         </div>
-        <Link href="/dashboard" className="btn-primary inline-flex">
-          Back to gym
-        </Link>
         <Disclaimer />
       </main>
     </div>

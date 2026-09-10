@@ -12,7 +12,7 @@ const geistSans = localFont({
 export const metadata: Metadata = {
   title: "BreachGym — State Breach Notice Micro-Learning",
   description:
-    "Duolingo-style training for law firm associates on US state data breach notification laws. Educational demo only — not legal advice.",
+    "Quiet, partner-serious training for law firm associates on US state data breach notification laws. Educational demo only — not legal advice.",
 };
 
 export default function RootLayout({
@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} antialiased`}>
+      <body className={`${geistSans.variable} font-sans antialiased`}>
         <ProfileProvider>{children}</ProfileProvider>
       </body>
     </html>
