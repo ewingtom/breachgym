@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f0fdf4;
+  --foreground: #0f172a;
+}
+
+body {
+  color: var(--foreground);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, #d8b4fe55, transparent),
+    radial-gradient(900px 500px at 100% 0%, #6ee7b755, transparent),
+    radial-gradient(800px 400px at 50% 100%, #fda4af44, transparent),
+    #f8fafc;
+  min-height: 100vh;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-2xl bg-gradient-to-b from-emerald-400 to-emerald-600 px-5 py-3 text-base font-black text-white shadow-[0_4px_0_0_#15803d] transition hover:brightness-105 active:translate-y-0.5 active:shadow-[0_2px_0_0_#15803d] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-2xl bg-gradient-to-b from-violet-400 to-violet-600 px-5 py-3 text-base font-black text-white shadow-[0_4px_0_0_#6d28d9] transition hover:brightness-105 active:translate-y-0.5 active:shadow-[0_2px_0_0_#6d28d9];
+  }
+  .btn-coral {
+    @apply inline-flex items-center justify-center rounded-2xl bg-gradient-to-b from-rose-400 to-rose-600 px-5 py-3 text-base font-black text-white shadow-[0_4px_0_0_#be123c] transition hover:brightness-105 active:translate-y-0.5 active:shadow-[0_2px_0_0_#be123c];
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-2xl border-2 border-slate-200 bg-white px-5 py-3 text-base font-bold text-slate-600 transition hover:border-emerald-300 hover:bg-emerald-50;
+  }
+  .card {
+    @apply rounded-3xl border-2 border-white bg-white/90 p-5 shadow-lg shadow-slate-200/60 backdrop-blur;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
