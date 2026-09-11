@@ -5,9 +5,11 @@
  */
 import { spawnSync } from "node:child_process";
 import { writeFileSync, unlinkSync } from "node:fs";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const runner = join("/workspace/breachgym", "scripts", "_mcq_balance_runner.ts");
+const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+const runner = join(root, "scripts", "_mcq_balance_runner.ts");
 writeFileSync(
   runner,
   `
@@ -102,7 +104,7 @@ console.log("OK: mcq length-balance checks passed");
 );
 
 const r = spawnSync("npx", ["--yes", "tsx", runner], {
-  cwd: "/workspace/breachgym",
+  cwd: root,
   encoding: "utf8",
   env: { ...process.env },
 });
