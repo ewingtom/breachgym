@@ -15,6 +15,7 @@ import {
 import { STATE_MAP } from "@/data/states";
 import { deriveDifficulty, DIFFICULTY_LABELS, DifficultyLevel } from "@/lib/difficulty";
 import {
+  balanceOptionLengths,
   fingerprintOfGenerated,
   generateQuestionPool,
   GeneratedMcq,
@@ -163,18 +164,20 @@ function lessonToCards(): AdaptiveCard[] {
         // Convert fill-blank into a recognition MCQ for adaptive workouts
         const joined = item.blanks.map((b) => b.answer).join(" / ");
         const distractors = [
-          "public directory data only",
-          "encrypted key material exclusively",
-          "federal FOIA exemptions",
-          "CRA substitute notice alone",
+          "public directory data only, with no statutory personal-information element in play",
+          "encrypted key material exclusively, held solely by the controller and never breached",
+          "federal FOIA exemptions that displace every state breach-notice duty in teaching charts",
+          "consumer reporting agency substitute notice alone, without individual or Attorney General mapping",
         ];
-        const opts = shuffle([joined, ...distractors].slice(0, 4));
+        const rawOpts = shuffle([joined, ...distractors].slice(0, 4));
+        const correctIndex = rawOpts.indexOf(joined);
+        const opts = balanceOptionLengths(rawOpts, correctIndex);
         cards.push({
           id: `${item.id}__fb`,
           type: "mcq",
           question: `${item.prompt} — complete: “${item.sentence}”`,
           options: opts,
-          correctIndex: opts.indexOf(joined),
+          correctIndex: opts.indexOf(joined) >= 0 ? opts.indexOf(joined) : correctIndex,
           explanation: item.explanation,
           topic: item.topic,
           topics: itemTopics(item),
@@ -238,8 +241,8 @@ function drillSnippets(): AdaptiveCard[] {
           type: "mcq",
           question: `[Drill · ${n.title}] For ${name} (${code}): Notify now, or investigate/document first? Context: ${ctx}`,
           options: [
-            "Notify",
-            "Investigate/document first (notice not automatic)",
+            "Notify affected residents now under this state's teaching chart for these facts.",
+            "Investigate and document first; notice is not automatic under this state's teaching for these facts.",
           ],
           correctIndex: notify ? 0 : 1,
           explanation: n.explanations[code] || n.factPattern,
@@ -259,7 +262,10 @@ function drillSnippets(): AdaptiveCard[] {
           id: `ex-${h.id}:${code}`,
           type: "mcq",
           question: `[Drill · ${h.title}] Does encryption safe harbor likely apply in ${name} (${code})? Scenario: ${ctx}`,
-          options: ["Harbor yes", "Harbor no / still in play"],
+          options: [
+            "Yes — encryption safe harbor likely keeps this outside notice under the teaching chart.",
+            "No — safe harbor is unlikely or the incident remains in play for notice analysis under teaching.",
+          ],
           correctIndex: harbor ? 0 : 1,
           explanation: h.explanations[code] || h.scenario,
           ...meta,
@@ -280,8 +286,8 @@ function drillSnippets(): AdaptiveCard[] {
           type: "mcq",
           question: `[Drill · ${p.title}] On these facts, do ${name} (${code}) classic PI triggers clearly fire? Fields: ${fieldList}`,
           options: [
-            "Yes — PI definition clearly fires",
-            "No automatic fire / empty teaching key on these facts",
+            "Yes — the personal-information definition clearly fires on these fields under teaching.",
+            "No automatic fire — the teaching key is empty or fact-dependent on these fields alone.",
           ],
           correctIndex: fires ? 0 : 1,
           explanation: fires
@@ -297,7 +303,10 @@ function drillSnippets(): AdaptiveCard[] {
           id: `ex-${p.id}:analysis:${c.id}`,
           type: "mcq",
           question: `[Drill · ${p.title}] Is this analysis accurate? “${c.text}”`,
-          options: ["Accurate", "Not accurate"],
+          options: [
+            "Accurate — this analysis matches BreachGym teaching for the stated facts.",
+            "Not accurate — this analysis conflicts with BreachGym teaching for the stated facts.",
+          ],
           correctIndex: c.correct ? 0 : 1,
           explanation: c.explanation,
           ...meta,

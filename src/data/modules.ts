@@ -26,10 +26,10 @@ export const MODULES: Module[] = [
         question:
           "A SaaS HR vendor hosts payroll files (name+SSN) for Midland Retail. Attackers exfiltrate Midland's files from the vendor. Midland owns the PI; the vendor maintains it. Best first-cut duty map?",
         options: [
-          "Only the vendor must notify every resident; Midland has no statute role because it outsourced hosting",
-          "Vendor generally notifies Midland promptly; Midland (owner/licensee) generally drives resident notice under applicable state statutes — contracts may add vendor notice obligations but do not erase the statutory owner pattern",
-          "Neither notifies anyone until a federal agency orders it",
-          "Only Florida residents matter because the vendor's servers are in AWS us-east-1",
+          "Only the vendor must notify every resident; Midland has no statute role because it outsourced hosting to a processor, which is a common but incorrect training shortcut on multi-state drills under a single national rule that does not exist in BreachGym teaching.",
+          "The vendor generally notifies Midland promptly; Midland as owner or licensee generally drives resident notice under applicable state statutes, though contracts may add vendor notice obligations.",
+          "Neither Midland nor the vendor notifies anyone until a federal agency issues a binding order covering every affected resident without mapping each affected state's statute, clock, and regulator path.",
+          "Only Florida residents matter for notice because the vendor's servers happen to sit in an AWS us-east-1 region, treating every jurisdiction as if it copied California's notice model even though the teaching chart requires a jurisdiction-specific analysis.",
         ],
         correctIndex: 1,
         explanation:
@@ -55,10 +55,10 @@ export const MODULES: Module[] = [
         question:
           "Insider opens a shared drive folder with NY residents' name+SSN, screenshots three files to a personal phone, and emails them off-network. Which framing is most associate-ready?",
         options: [
-          "No notice analysis is needed because the insider was an employee with a badge",
-          "Treat as unauthorized acquisition/access of private information for NY SHIELD analysis (and run the multi-state matrix for other residents) — insider status does not sanitize exfiltration",
-          "Only acquisition by foreign APTs counts under any US state statute",
-          "Screenshots are never personal information because they are images",
+          "No notice analysis is needed because the insider was an employee with a badge and routine system access credentials under a single national rule that does not exist in BreachGym teaching without mapping each affected state's statute, clock, and regulator path.",
+          "Treat this as unauthorized acquisition or access of private information for New York SHIELD analysis, and run the multi-state matrix for other residents; insider status does not sanitize exfiltration.",
+          "Only acquisition by foreign advanced persistent threat actors counts as a breach under any United States state statute, treating every jurisdiction as if it copied California's notice model even though the teaching chart requires a jurisdiction-specific analysis.",
+          "Screenshots are never personal information because they are images rather than structured database fields or CSV exports even though the teaching chart requires a jurisdiction-specific analysis, collapsing distinct statutory families into one oversimplified answer.",
         ],
         correctIndex: 1,
         explanation:
@@ -73,10 +73,10 @@ export const MODULES: Module[] = [
         type: "mcq",
         question: "Client email: 'We had an incident. Just follow California and we'll be fine for everyone else.' Your response?",
         options: [
-          "Agree — California is always the strictest on every axis",
-          "Reject: map residents across all affected jurisdictions, then apply each state's PI definition, acquisition/access verb, encryption harbor, risk test (if any), clocks, AG/regulator thresholds, and sequencing",
-          "Wait 90 days so every numbered clock expires together",
-          "Notify only if the CEO is a California resident",
+          "Agree that California is always the strictest jurisdiction on every notice axis, so a California-only plan covers everyone else without mapping each affected state's statute, clock, and regulator path, treating every jurisdiction as if it copied California's notice model.",
+          "Reject that approach: map residents across all affected jurisdictions, then apply each state's personal-information definition, acquisition or access verb, encryption harbor, risk test if any, clocks, Attorney General thresholds, and sequencing.",
+          "Wait ninety days so every numbered individual and Attorney General clock expires together before any letters go out even though the teaching chart requires a jurisdiction-specific analysis, collapsing distinct statutory families into one oversimplified answer.",
+          "Notify residents only if the company's chief executive officer is personally a California resident under the statute, collapsing distinct statutory families into one oversimplified answer while ignoring sequencing, thresholds, and clock-start differences across states.",
         ],
         correctIndex: 1,
         explanation:
@@ -125,10 +125,10 @@ export const MODULES: Module[] = [
         question:
           "Coverage seam: Georgia vs Florida for a commercial data holder that is not a classic 'information broker.' Best teaching contrast?",
         options: [
-          "Identical — both use the same acquire/maintain/store/use covered-entity frame and 500 AG path",
-          "Florida teaching often reaches entities that acquire/maintain/store/use PI; Georgia private-sector teaching often centers on information brokers/data collectors, with generally no private-sector AG notice and a very high CRA threshold — do not import FL coverage into GA",
-          "Georgia always requires AG notice at 50 residents like DC",
-          "Florida never covers maintainers",
+          "Identical coverage: both states use the same acquire, maintain, store, or use covered-entity frame and a shared 500-resident Attorney General path, treating every jurisdiction as if it copied California's notice model even though the teaching chart requires a jurisdiction-specific analysis, collapsing distinct statutory families into one oversimplified answer.",
+          "Florida teaching often reaches entities that acquire, maintain, store, or use personal information; Georgia private-sector teaching often centers on information brokers or data collectors, with generally no private-sector Attorney General notice and a very high consumer reporting agency threshold.",
+          "Georgia always requires Attorney General notice at fifty residents, matching the District of Columbia's unusually low regulator threshold teaching, collapsing distinct statutory families into one oversimplified answer while ignoring sequencing, thresholds, and clock-start differences across states.",
+          "Florida never covers maintainers of personal information and only reaches classic owners who license data for their own use while ignoring sequencing, thresholds, and clock-start differences across states, which is a common but incorrect training shortcut on multi-state drills under a single national rule that does not exist in BreachGym teaching.",
         ],
         correctIndex: 1,
         explanation:
@@ -144,10 +144,10 @@ export const MODULES: Module[] = [
         question:
           "Public bucket exposed name+SSN for four hours. Logs show only your IR team's test fetch; third-party download cannot be ruled out. Residents in CA/IL/GA and CT/MI/AZ. First-cut doctrinal split?",
         options: [
-          "One national skip: clean-enough logs mean no notice anywhere",
-          "Non-risk / acquisition-oriented teaching (CA/IL/GA) generally pushes toward notice for unencrypted name+SSN exposure; risk-assessment states (CT/MI/AZ) require investigate-and-document — not an automatic no-notice while download cannot be ruled out",
-          "Only Arizona ever requires notice on bucket exposures",
-          "Risk states always require notice faster than California",
+          "One national skip applies: clean-enough internal logs mean no notice is required anywhere once the IR team confirms its own test fetch even though the teaching chart requires a jurisdiction-specific analysis, collapsing distinct statutory families into one oversimplified answer while ignoring sequencing, thresholds, and clock-start differences across states.",
+          "Non-risk or acquisition-oriented teaching in California, Illinois, and Georgia generally pushes toward notice for unencrypted name-plus-SSN exposure; risk-assessment states such as Connecticut, Michigan, and Arizona require investigate-and-document analysis rather than an automatic no-notice while download cannot be ruled out.",
+          "Only Arizona ever requires notice on public-bucket exposures of name and Social Security number under BreachGym teaching charts while ignoring sequencing, thresholds, and clock-start differences across states, which is a common but incorrect training shortcut on multi-state drills under a single national rule that does not exist in BreachGym teaching without mapping each affected state's statute, clock, and regulator path.",
+          "Risk-assessment states always require notice faster than California because their investigation clocks start on discovery day zero in every case, which is a common but incorrect training shortcut on multi-state drills under a single national rule that does not exist in BreachGym teaching without mapping each affected state's statute, clock, and regulator path.",
         ],
         correctIndex: 1,
         explanation:
@@ -163,10 +163,10 @@ export const MODULES: Module[] = [
         question:
           "Discovery Day 0; you determine a breach on Day 12. Which statement about clock-start events is correct?",
         options: [
-          "All numbered individual clocks start on Day 0 because discovery is universal",
-          "Discovery-family outer bounds (e.g., CA/WA/NY teaching) count from Day 0; determination-family outer bounds (e.g., FL/CO/TX teaching) count from Day 12 — investigation quality affects when determination clocks begin",
-          "Texas's individual clock always starts at discovery, never determination",
-          "Clock-start events only matter for CRA notice",
+          "All numbered individual clocks start on Day 0 because discovery is treated as a universal start event in every United States statute, collapsing distinct statutory families into one oversimplified answer while ignoring sequencing, thresholds, and clock-start differences across states.",
+          "Discovery-family outer bounds such as California, Washington, and New York teaching count from Day 0; determination-family outer bounds such as Florida, Colorado, and Texas teaching count from Day 12, so investigation quality affects when determination clocks begin.",
+          "Texas's individual clock always starts at discovery and never at determination, so Day 12 is irrelevant to the Texas outer bound, which is a common but incorrect training shortcut on multi-state drills under a single national rule that does not exist in BreachGym teaching.",
+          "Clock-start events only matter for consumer reporting agency notice and never for individual or Attorney General timelines under a single national rule that does not exist in BreachGym teaching without mapping each affected state's statute, clock, and regulator path, treating every jurisdiction as if it copied California's notice model.",
         ],
         correctIndex: 1,
         explanation:
@@ -191,11 +191,11 @@ export const MODULES: Module[] = [
         quiz: {
           question: "Why is Equifax still useful training for state notice laws?",
           options: [
-            "Because only one state's law applied",
-            "Because it featured classic PI elements most state definitions treat as covered — shifting the hard work to timelines, regulators, and multi-state orchestration",
-            "Because the data was only public LinkedIn profiles",
-            "Because encryption safe harbor clearly applied to all records",
-          ],
+            "Because only one state's law applied to the entire incident and multi-state orchestration was unnecessary while ignoring sequencing, thresholds, and clock-start differences across states, which is a common but incorrect training shortcut on multi-state drills.",
+            "Because it featured classic personal-information elements most state definitions treat as covered, shifting the hard work to timelines, regulators, and multi-state orchestration.",
+            "Because the data was only public LinkedIn profiles that never trigger state breach-notice personal-information definitions under a single national rule that does not exist in BreachGym teaching.",
+            "Because encryption safe harbor clearly applied to all records and eliminated notice analysis in every jurisdiction without mapping each affected state's statute, clock, and regulator path.",
+        ],
           correctIndex: 1,
           explanation:
             "Name paired with SSN sits at the common core of US state PI definitions. Equifax teaches scale and orchestration after the easy definitional call.",
@@ -210,10 +210,10 @@ export const MODULES: Module[] = [
         question:
           "Export contains email, home address, and phone — no SSN, DL, account+access code, biometrics, or credentials. Classic TX/CT-style PI definitions?",
         options: [
-          "Always a notice lock in every state because contact data is 'personal'",
-          "Often insufficient for classic statutes that need a listed sensitive element paired with name/identifier — still check expansive states separately for their listed elements",
-          "Only Maryland cares about addresses",
-          "Automatically health information under every statute",
+          "Always a notice lock in every state because contact data alone is treated as personal information under every classic statute, which is a common but incorrect training shortcut on multi-state drills under a single national rule that does not exist in BreachGym teaching.",
+          "Often insufficient for classic statutes that need a listed sensitive element paired with a name or identifier; still check expansive states separately for their listed elements such as credentials, medical data, or biometrics.",
+          "Only Maryland cares about home addresses in breach-notice teaching, so Texas and Connecticut analyses can ignore contact fields entirely without mapping each affected state's statute, clock, and regulator path, treating every jurisdiction as if it copied California's notice model.",
+          "Contact fields are automatically health information under every statute once a phone number appears next to an email address, treating every jurisdiction as if it copied California's notice model even though the teaching chart requires a jurisdiction-specific analysis.",
         ],
         correctIndex: 1,
         explanation:
@@ -279,10 +279,10 @@ export const MODULES: Module[] = [
         type: "mcq",
         question: "Name + email + home address only (no SSN/DL/account+access/biometrics/credentials). Classic TX/CT-style statutes?",
         options: [
-          "Always a breach notice lock in every state",
+          "Always a breach notice lock in every state under a single national rule that does not exist in BreachGym teaching",
           "Often insufficient for classic 'personal information' definitions that need a sensitive data element",
-          "Only Maryland cares about addresses",
-          "Automatically health information",
+          "Only Maryland cares about addresses, treating every jurisdiction as if it copied California's notice model",
+          "Automatically health information even though the teaching chart requires a jurisdiction-specific analysis, collapsing distinct statutory families into one oversimplified answer",
         ],
         correctIndex: 1,
         explanation:
@@ -314,10 +314,10 @@ export const MODULES: Module[] = [
         type: "mcq",
         question: "Payroll export for IL residents includes name + fingerprint templates used for timeclocks (no SSN). Associate-ready call?",
         options: [
-          "Biometrics never appear in Illinois breach PI concepts — skip IL",
+          "Biometrics never appear in Illinois breach PI concepts — skip IL without mapping each affected state's statute, clock, and regulator path, treating every jurisdiction as if it copied California's notice model",
           "Unique biometric data is in-play for Illinois PI breach concepts — treat biometric fields as covered elements and continue the matrix",
-          "Only paper records are regulated in Illinois",
-          "Illinois has no breach statute",
+          "Only paper records are regulated in Illinois even though the teaching chart requires a jurisdiction-specific analysis, collapsing distinct statutory families into one oversimplified answer",
+          "Illinois has no breach statute, collapsing distinct statutory families into one oversimplified answer while ignoring sequencing, thresholds, and clock-start differences across states",
         ],
         correctIndex: 1,
         explanation:
@@ -352,11 +352,11 @@ export const MODULES: Module[] = [
         quiz: {
           question: "Capital One is especially useful to illustrate…",
           options: [
-            "That only on-premises databases can be breached",
+            "That only on-premises databases can be breached, treating every jurisdiction as if it copied California's notice model",
             "How cloud misconfiguration can expose classic PI fields at scale",
-            "That email addresses alone always require AG notice",
-            "That Texas does not have a breach statute",
-          ],
+            "That email addresses alone always require AG notice, collapsing distinct statutory families into one oversimplified answer",
+            "That Texas does not have a breach statute while ignoring sequencing, thresholds, and clock-start differences across states",
+        ],
           correctIndex: 1,
           explanation:
             "Cloud shared-responsibility failures are modern breach bread-and-butter.",
@@ -422,10 +422,10 @@ export const MODULES: Module[] = [
         type: "mcq",
         question: "Unencrypted name+SSN confirmed downloaded by an attacker. California vs Connecticut?",
         options: [
-          "Both clearly skip notice due to 'no harm yet'",
+          "Both clearly skip notice due to 'no harm yet' even though the teaching chart requires a jurisdiction-specific analysis",
           "CA: generally notify; CT: risk analysis still required but on these facts misuse possibility is high → practically notify",
-          "Only CT requires notice; CA never does",
-          "Neither statute covers SSNs",
+          "Only CT requires notice; CA never does while ignoring sequencing, thresholds, and clock-start differences across states",
+          "Neither statute covers SSNs, which is a common but incorrect training shortcut on multi-state drills under a single national rule that does not exist in BreachGym teaching",
         ],
         correctIndex: 1,
         explanation:
@@ -455,9 +455,9 @@ export const MODULES: Module[] = [
         question: "Virginia breach-notice risk framing (distinct from VCDPA) is closest to…",
         options: [
           "Identity theft / fraud oriented belief about harm after unauthorized acquisition",
-          "Strict liability for any email typo regardless of data elements",
-          "Paper mail theft only — electronic incidents are excluded",
-          "Federal FOIA disclosure standards",
+          "Strict liability for any email typo regardless of data elements while ignoring sequencing, thresholds, and clock-start differences across states",
+          "Paper mail theft only — electronic incidents are excluded, which is a common but incorrect training shortcut on multi-state drills",
+          "Federal FOIA disclosure standards under a single national rule that does not exist in BreachGym teaching",
         ],
         correctIndex: 0,
         explanation:
@@ -482,11 +482,11 @@ export const MODULES: Module[] = [
         quiz: {
           question: "In a Target-like confirmed card-data theft, risk-of-harm states usually…",
           options: [
-            "Still easily excuse all notice",
+            "Still easily excuse all notice while ignoring sequencing, thresholds, and clock-start differences across states",
             "Still generally require notice because misuse is reasonably likely",
-            "Apply only to paper receipts",
-            "Are preempted by PCI forever",
-          ],
+            "Apply only to paper receipts under a single national rule that does not exist in BreachGym teaching",
+            "Are preempted by PCI forever without mapping each affected state's statute, clock, and regulator path",
+        ],
           correctIndex: 1,
           explanation:
             "Risk analysis cuts both ways — it can excuse low-risk edge cases and confirm notice in clear theft cases.",
@@ -531,10 +531,10 @@ export const MODULES: Module[] = [
         type: "mcq",
         question: "Encrypted DB columns, but plaintext replica in a search index was stolen. Safe harbor?",
         options: [
-          "Yes for everything because the 'primary' DB was encrypted",
+          "Yes for everything because the 'primary' DB was encrypted, which is a common but incorrect training shortcut on multi-state drills",
           "No complete harbor — plaintext copies still carry notice risk for those records",
-          "Only Texas cares about replicas",
-          "Safe harbor doubles if you used two vendors",
+          "Only Texas cares about replicas without mapping each affected state's statute, clock, and regulator path",
+          "Safe harbor doubles if you used two vendors, treating every jurisdiction as if it copied California's notice model",
         ],
         correctIndex: 1,
         explanation:
@@ -573,11 +573,11 @@ export const MODULES: Module[] = [
         quiz: {
           question: "Ransomware on a vendor means…",
           options: [
-            "Automatic encryption safe harbor for all customers",
+            "Automatic encryption safe harbor for all customers under a single national rule that does not exist in BreachGym teaching",
             "You must still analyze acquisition/exfiltration and data form (encrypted at rest vs stolen plaintext)",
-            "Only HIPAA matters; state law never applies to health data",
-            "Notice is illegal",
-          ],
+            "Only HIPAA matters; state law never applies to health data, treating every jurisdiction as if it copied California's notice model",
+            "Notice is illegal even though the teaching chart requires a jurisdiction-specific analysis, collapsing distinct statutory families into one oversimplified answer",
+        ],
           correctIndex: 1,
           explanation:
             "Separate 'systems locked by ransomware' from 'was PI acquired unencrypted.'",
@@ -593,8 +593,8 @@ export const MODULES: Module[] = [
         options: [
           "Safe harbor likely applies to that encrypted volume",
           "Every state still requires newspaper notice within 24h",
-          "Only if the laptop was pink",
-          "Safe harbor never exists anywhere",
+          "Only if the laptop was pink even though the teaching chart requires a jurisdiction-specific analysis",
+          "Safe harbor never exists anywhere, collapsing distinct statutory families into one oversimplified answer",
         ],
         correctIndex: 0,
         explanation:
@@ -687,12 +687,12 @@ export const MODULES: Module[] = [
       {
         id: "t-mcq-1",
         type: "mcq",
-        question: "Florida individual notice outer bound often taught as…",
+        question: "Which individual-notice outer bound is commonly taught for Florida private-sector breaches?",
         options: [
-          "30 days after determination (expeditiously as practicable, with limited extensions)",
-          "18 months",
-          "Same day as discovery always",
-          "Only after criminal sentencing",
+          "Thirty days after determination, given as expeditiously as practicable, with limited extensions recognized in teaching charts.",
+          "Eighteen months after discovery, which is the Florida individual outer bound commonly drilled for associates even though the teaching chart requires a jurisdiction-specific analysis.",
+          "The same calendar day as discovery in every case, with no determination-linked outer bound in Florida teaching, collapsing distinct statutory families into one oversimplified answer.",
+          "Only after criminal sentencing concludes, because Florida ties individual notice to the end of related prosecutions while ignoring sequencing, thresholds, and clock-start differences across states.",
         ],
         correctIndex: 0,
         explanation:
@@ -719,10 +719,10 @@ export const MODULES: Module[] = [
         type: "mcq",
         question: "Recipient map beyond individuals and AGs — when do major CRAs typically enter?",
         options: [
-          "When resident counts cross statutory CRA triggers (often 1,000+ in many states; confirm each statute — GA teaching is much higher)",
-          "Only after a federal indictment",
-          "Only if the entity has a FCRA furnishership agreement",
-          "CRAs are never part of state breach notice statutes",
+          "When resident counts cross statutory consumer reporting agency triggers, often one thousand or more in many states; confirm each statute, noting Georgia teaching is much higher.",
+          "Only after a federal indictment is unsealed, because consumer reporting agencies never appear in state breach-notice statutes before that event, collapsing distinct statutory families into one oversimplified answer.",
+          "Only if the entity has a formal Fair Credit Reporting Act furnishership agreement already on file with each major bureau while ignoring sequencing, thresholds, and clock-start differences across states.",
+          "Consumer reporting agencies are never part of state breach-notice statutes and can be ignored in multi-state recipient maps, which is a common but incorrect training shortcut on multi-state drills.",
         ],
         correctIndex: 0,
         explanation:
@@ -734,12 +734,12 @@ export const MODULES: Module[] = [
       {
         id: "t-mcq-3",
         type: "mcq",
-        question: "Washington outer bound commonly drilled as…",
+        question: "Which individual-notice outer bound is commonly drilled for Washington private-sector breaches?",
         options: [
-          "No later than 30 days after discovery (with exceptions)",
-          "Five years",
-          "Only leap days",
-          "Instantaneous telepathy",
+          "No later than thirty days after discovery, subject to recognized exceptions in the teaching chart for Washington.",
+          "Five years after discovery, which is the Washington individual outer bound commonly taught for private-sector breaches.",
+          "Only on leap days, because Washington ties its individual clock to a biennial calendar rather than discovery.",
+          "Instantaneous notice by any means, with no numeric outer bound appearing in Washington individual-notice teaching.",
         ],
         correctIndex: 0,
         explanation:
@@ -755,10 +755,10 @@ export const MODULES: Module[] = [
         question:
           "Discovery Day 0. You determine a breach on Day 12. Which statement about clock families is correct?",
         options: [
-          "FL's individual outer bound runs from Day 0 because all clocks are discovery clocks",
-          "CA/WA/NY individual outer bounds are discovery-family (count from Day 0); FL/CO/TX individual outer bounds are determination-family (count from Day 12)",
-          "TX's 60-day individual clock always starts at discovery, never determination",
-          "CT's 60-day clock starts only after AG notice is filed",
+          "Florida's individual outer bound runs from Day 0 because all United States state clocks are discovery clocks in teaching charts while ignoring sequencing, thresholds, and clock-start differences across states.",
+          "California, Washington, and New York individual outer bounds are discovery-family and count from Day 0; Florida, Colorado, and Texas individual outer bounds are determination-family and count from Day 12.",
+          "Texas's sixty-day individual clock always starts at discovery and never at determination, so Day 12 cannot begin that outer bound under a single national rule that does not exist in BreachGym teaching.",
+          "Connecticut's sixty-day clock starts only after Attorney General notice is filed, not from discovery or determination events without mapping each affected state's statute, clock, and regulator path, treating every jurisdiction as if it copied California's notice model.",
         ],
         correctIndex: 1,
         explanation:
@@ -774,10 +774,10 @@ export const MODULES: Module[] = [
         question:
           "CA SB-446 sequencing: you notified 612 CA residents on Day 18. When is the AG sample due?",
         options: [
-          "Anytime before consumer notice, because AG always comes first in CA",
-          "Within 15 calendar days AFTER consumer notice (Day 18 + 15), because >500 CA residents were notified",
-          "Only if ≥250 CA residents — same as Texas",
-          "Never — California has no AG notice path",
+          "Anytime before consumer notice, because Attorney General notice always comes first under California teaching sequencing rules, which is a common but incorrect training shortcut on multi-state drills.",
+          "Within fifteen calendar days after consumer notice (Day 18 plus fifteen), because more than five hundred California residents were notified.",
+          "Only if at least two hundred fifty California residents are affected, matching the Texas Attorney General headcount teaching gate without mapping each affected state's statute, clock, and regulator path.",
+          "Never, because California has no Attorney General notice path for private-sector breaches in BreachGym teaching charts, treating every jurisdiction as if it copied California's notice model.",
         ],
         correctIndex: 1,
         explanation:
@@ -793,10 +793,10 @@ export const MODULES: Module[] = [
         question:
           "You will notify 180 CT residents, 600 CA residents, and 300 TX residents. Which AG map is right?",
         options: [
-          "Only CA and TX — CT needs 500+ like 'most states'",
-          "CT yes (no headcount minimum whenever residents are notified); CA yes (>500 notified); TX yes (≥250)",
-          "Only TX, because 250 is the universal AG floor",
-          "None until 1,000 nationwide",
+          "Only California and Texas require Attorney General notice here; Connecticut needs five hundred or more residents like most states under a single national rule that does not exist in BreachGym teaching.",
+          "Connecticut yes (no headcount minimum whenever residents are notified); California yes (more than five hundred notified); Texas yes (two hundred fifty or more).",
+          "Only Texas requires Attorney General notice, because two hundred fifty is the universal Attorney General floor in every state, treating every jurisdiction as if it copied California's notice model.",
+          "None of these Attorney General paths open until one thousand residents are affected on a nationwide combined headcount even though the teaching chart requires a jurisdiction-specific analysis.",
         ],
         correctIndex: 1,
         explanation:
@@ -851,10 +851,10 @@ export const MODULES: Module[] = [
         question:
           "Confirmed phishing exfiltration of payroll (name, SSN, bank+routing) for residents in CA, TX, FL, CT, OH, and AK. First-cut notice map?",
         options: [
-          "Nobody — phishing is excluded everywhere",
-          "Likely notice across the board; risk/material-risk states (FL/CT/OH/AK) still light up because misuse / ID-theft risk is reasonably clear on these facts",
-          "Only CT and AK, because risk states are 'stricter' on notice",
-          "Only notify if the CEO is a resident",
+          "Nobody receives notice because phishing is excluded from every United States state breach statute as a matter of teaching without mapping each affected state's statute, clock, and regulator path.",
+          "Likely notice across the board; risk or material-risk states such as Florida, Connecticut, Ohio, and Alaska still light up because misuse or identity-theft risk is reasonably clear on these facts.",
+          "Only Connecticut and Alaska require notice, because risk states are always stricter on notice than non-risk acquisition states even though the teaching chart requires a jurisdiction-specific analysis.",
+          "Notify residents only if the company's chief executive officer is personally a resident of one of the listed states, collapsing distinct statutory families into one oversimplified answer while ignoring sequencing, thresholds, and clock-start differences across states.",
         ],
         correctIndex: 1,
         explanation:
@@ -870,10 +870,10 @@ export const MODULES: Module[] = [
         question:
           "Public S3 bucket exposed name+SSN for 6 hours; only your team's test fetch is logged; third-party download cannot be ruled out. Residents in CA, GA, IL vs CT, MI, AZ, ID. Best associate framing?",
         options: [
-          "One national answer: everyone skips notice because logs are 'clean enough'",
-          "Non-risk / acquisition-oriented states (e.g., CA/GA/IL teaching) generally push toward notice on unencrypted name+SSN exposure; risk-assessment states (CT/MI/AZ/ID) require investigate-and-document — not a clean automatic no-notice while download cannot be ruled out",
-          "Only Idaho ever requires notice",
-          "Risk states always require notice faster than California",
+          "One national answer applies: everyone skips notice because internal logs are clean enough to prove no third party downloaded the objects, treating every jurisdiction as if it copied California's notice model even though the teaching chart requires a jurisdiction-specific analysis, collapsing distinct statutory families into one oversimplified answer while ignoring sequencing, thresholds, and clock-start differences across states.",
+          "Non-risk or acquisition-oriented states such as California, Georgia, and Illinois generally push toward notice on unencrypted name-plus-SSN exposure; risk-assessment states such as Connecticut, Michigan, Arizona, and Idaho require investigate-and-document analysis rather than a clean automatic no-notice while download cannot be ruled out.",
+          "Only Idaho ever requires notice on public-bucket exposures of name and Social Security number under BreachGym teaching, collapsing distinct statutory families into one oversimplified answer while ignoring sequencing, thresholds, and clock-start differences across states, which is a common but incorrect training shortcut on multi-state drills.",
+          "Risk-assessment states always require notice faster than California because their clocks ignore investigation and start on Day 0 while ignoring sequencing, thresholds, and clock-start differences across states, which is a common but incorrect training shortcut on multi-state drills under a single national rule that does not exist in BreachGym teaching.",
         ],
         correctIndex: 1,
         explanation:
@@ -889,10 +889,10 @@ export const MODULES: Module[] = [
         question:
           "Discovery Day 0 for a clear notice event. Which cluster shares a ~45-day individual outer-bound teaching family?",
         options: [
-          "Only California and Washington",
-          "Examples: AL, AZ, IN, NM, OH, OR, RI, TN, VT, WI (and MD's 45-day discovery family) — contrast with CA/WA/NY/ME ~30 and CT/DE/LA/SD/TX ~60",
-          "Every state is exactly 72 hours",
-          "Only Wyoming and Montana",
+          "Only California and Washington share a forty-five-day individual outer-bound teaching family after discovery Day 0 even though the teaching chart requires a jurisdiction-specific analysis, collapsing distinct statutory families into one oversimplified answer while ignoring sequencing, thresholds, and clock-start differences across states.",
+          "Examples include Alabama, Arizona, Indiana, New Mexico, Ohio, Oregon, Rhode Island, Tennessee, Vermont, and Wisconsin, plus Maryland's forty-five-day discovery family; contrast with California, Washington, New York, and Maine near thirty days and Connecticut, Delaware, Louisiana, South Dakota, and Texas near sixty days.",
+          "Every state is exactly seventy-two hours for individual notice, so forty-five-day teaching clusters do not appear in BreachGym charts while ignoring sequencing, thresholds, and clock-start differences across states, which is a common but incorrect training shortcut on multi-state drills under a single national rule that does not exist in BreachGym teaching.",
+          "Only Wyoming and Montana share a forty-five-day individual outer-bound teaching family after discovery Day 0, which is a common but incorrect training shortcut on multi-state drills under a single national rule that does not exist in BreachGym teaching without mapping each affected state's statute, clock, and regulator path.",
         ],
         correctIndex: 1,
         explanation:
@@ -908,10 +908,10 @@ export const MODULES: Module[] = [
         question:
           "AG / regulator threshold trap: 80 residents each in DC, VT, CT, ME vs 80 in WI, OH, MS. Who is most likely on the regulator-notice critical path?",
         options: [
-          "Only Wisconsin — Midwest states always file first",
-          "DC (AG path often taught at 50+), plus VT/CT/ME (AG/regulator whenever residents are notified / no classic 500 headcount) — WI/OH/MS often have no general commercial AG filing at that size",
-          "All six equally at 80 residents because 'AG always at 500'",
-          "None until 10,000 nationwide",
+          "Only Wisconsin sits on the regulator-notice critical path, because Midwest states always file Attorney General notice first at eighty residents, collapsing distinct statutory families into one oversimplified answer while ignoring sequencing, thresholds, and clock-start differences across states, which is a common but incorrect training shortcut on multi-state drills.",
+          "The District of Columbia (Attorney General path often taught at fifty or more), plus Vermont, Connecticut, and Maine (Attorney General or regulator whenever residents are notified, without a classic five-hundred headcount), while Wisconsin, Ohio, and Mississippi often have no general commercial Attorney General filing at that size.",
+          "All six jurisdictions file equally at eighty residents because Attorney General notice always opens at five hundred nationwide, which is a common but incorrect training shortcut on multi-state drills under a single national rule that does not exist in BreachGym teaching without mapping each affected state's statute, clock, and regulator path.",
+          "None of these jurisdictions require regulator notice until ten thousand residents are affected on a nationwide combined count under a single national rule that does not exist in BreachGym teaching without mapping each affected state's statute, clock, and regulator path, treating every jurisdiction as if it copied California's notice model even though the teaching chart requires a jurisdiction-specific analysis.",
         ],
         correctIndex: 1,
         explanation:
@@ -944,10 +944,10 @@ export const MODULES: Module[] = [
         question:
           "Alaska no-harm path — what extra step distinguishes AK from a casual 'we decided no harm' email?",
         options: [
-          "Nothing — vibes are enough",
-          "After appropriate investigation, provide written notice to the Alaska AG, document the no-likelihood-of-harm determination, and retain documentation (commonly taught as 5 years)",
-          "Only call California's AG",
-          "Publish the determination on the front page of a newspaper",
+          "Nothing extra is required; informal vibes and an internal email are enough to claim Alaska's no-harm path while ignoring sequencing, thresholds, and clock-start differences across states, which is a common but incorrect training shortcut on multi-state drills.",
+          "After appropriate investigation, provide written notice to the Alaska Attorney General, document the no-likelihood-of-harm determination, and retain that documentation for the period commonly taught as five years.",
+          "Only California's Attorney General must be called when Alaska residents are affected, because Alaska defers to California filings under a single national rule that does not exist in BreachGym teaching without mapping each affected state's statute, clock, and regulator path.",
+          "Publish the no-harm determination on the front page of a newspaper of general circulation and skip any Attorney General touch without mapping each affected state's statute, clock, and regulator path, treating every jurisdiction as if it copied California's notice model.",
         ],
         correctIndex: 1,
         explanation:
@@ -963,10 +963,10 @@ export const MODULES: Module[] = [
         question:
           "Iowa AG sequencing vs Maryland: you will notify 600 IA residents. Best teaching contrast?",
         options: [
-          "Iowa AG must be notified before any consumer letter, exactly like Maryland",
-          "Iowa: when >500 residents are notified, written AG Consumer Protection notice is commonly taught within 5 business days AFTER consumer notice — opposite sequencing instinct from Maryland's AG-before-individuals rule",
-          "Iowa never has AG notice",
-          "Iowa and Maryland are identical clocks",
+          "Iowa Attorney General notice must be completed before any consumer letter, matching Maryland's Attorney General-before-individuals sequencing rule exactly, which is a common but incorrect training shortcut on multi-state drills under a single national rule that does not exist in BreachGym teaching.",
+          "Iowa teaching: when more than five hundred residents are notified, written Attorney General Consumer Protection notice is commonly due within five business days after consumer notice — the opposite sequencing instinct from Maryland's Attorney General-before-individuals rule.",
+          "Iowa never has an Attorney General notice path for private-sector breaches under BreachGym multi-state teaching charts without mapping each affected state's statute, clock, and regulator path, treating every jurisdiction as if it copied California's notice model even though the teaching chart requires a jurisdiction-specific analysis.",
+          "Iowa and Maryland use identical Attorney General clocks and sequencing, so one filing checklist covers both states, treating every jurisdiction as if it copied California's notice model even though the teaching chart requires a jurisdiction-specific analysis, collapsing distinct statutory families into one oversimplified answer.",
         ],
         correctIndex: 1,
         explanation:
@@ -990,12 +990,12 @@ export const MODULES: Module[] = [
         id: "m-mcq-ga-broker",
         type: "mcq",
         question:
-          "Georgia coverage / regulator contrast vs Florida in a vendor incident?",
+          "In a vendor incident, which Georgia versus Florida coverage and regulator contrast matches BreachGym teaching?",
         options: [
-          "Identical — both use the same 'covered entity acquire/maintain/store/use' framing and 500 AG threshold",
-          "Georgia teaching often centers on information brokers/data collectors, generally no private-sector AG notice, and CRA notice at a very high 10,000+ threshold; Florida uses broader acquire/maintain/store/use covered-entity framing plus 500+ DLA notice and a 30-day determination clock",
-          "Georgia always requires AG notice at 50 residents like DC",
-          "Florida never covers maintainers",
+          "Identical framing: both Georgia and Florida use the same covered-entity acquire, maintain, store, or use model and a shared five-hundred Attorney General threshold under a single national rule that does not exist in BreachGym teaching without mapping each affected state's statute, clock, and regulator path, treating every jurisdiction as if it copied California's notice model.",
+          "Georgia teaching often centers on information brokers or data collectors, generally with no private-sector Attorney General notice and consumer reporting agency notice at a very high ten-thousand-plus threshold; Florida uses broader acquire, maintain, store, or use covered-entity framing plus five-hundred-plus Department of Legal Affairs notice and a thirty-day determination clock.",
+          "Georgia always requires Attorney General notice at fifty residents, matching District of Columbia teaching for every Southeast commercial holder, treating every jurisdiction as if it copied California's notice model even though the teaching chart requires a jurisdiction-specific analysis, collapsing distinct statutory families into one oversimplified answer while ignoring sequencing, thresholds, and clock-start differences across states.",
+          "Florida never covers maintainers of personal information and only reaches classic owners who license data exclusively for their own use even though the teaching chart requires a jurisdiction-specific analysis, collapsing distinct statutory families into one oversimplified answer while ignoring sequencing, thresholds, and clock-start differences across states, which is a common but incorrect training shortcut on multi-state drills.",
         ],
         correctIndex: 1,
         explanation:
@@ -1020,11 +1020,11 @@ export const MODULES: Module[] = [
         quiz: {
           question: "MOVEit-style events are hard because…",
           options: [
-            "Only one company ever uses the software",
-            "Cascading vendor relationships multiply who must analyze notice duties and when clocks start in every affected state/DC",
-            "State laws do not apply to file transfer tools",
-            "SSNs are never in file transfers",
-          ],
+            "Only one company ever uses the software, so cascading notice duties never arise in practice without mapping each affected state's statute, clock, and regulator path.",
+            "Cascading vendor relationships multiply who must analyze notice duties and when clocks start in every affected state and the District of Columbia.",
+            "State breach-notice laws do not apply to managed file-transfer tools, so the matrix can ignore MOVEit-style platforms even though the teaching chart requires a jurisdiction-specific analysis.",
+            "Social Security numbers are never present in file-transfer incidents, so personal-information triggers rarely fire, collapsing distinct statutory families into one oversimplified answer.",
+        ],
           correctIndex: 1,
           explanation:
             "Discovery, ownership, and residency get messy in supply-chain breaches — and mid-size states still have clocks.",
@@ -1039,10 +1039,10 @@ export const MODULES: Module[] = [
         question:
           "Mountain / Plains mix: UT (AG + Cyber Center at 500+), WY (often no AG), ND (AG at 250+, broad PI). Why rotate drills through these?",
         options: [
-          "They never apply if California residents exist",
-          "Associates over-index on coastal mega-states and miss threshold, PI-breadth, and no-AG seams that change the regulator map and definitional analysis",
-          "Only oil companies care about these statutes",
-          "They all share California's 30-day SB-446 clock",
+          "These Mountain and Plains statutes never apply whenever any California residents appear in the same incident matrix, treating every jurisdiction as if it copied California's notice model even though the teaching chart requires a jurisdiction-specific analysis.",
+          "Associates over-index on coastal mega-states and miss threshold, personal-information-breadth, and no-Attorney-General seams that change the regulator map and definitional analysis for Utah, Wyoming, and North Dakota.",
+          "Only oil and gas companies care about these statutes, so general commercial holders can skip Utah, Wyoming, and North Dakota rows, collapsing distinct statutory families into one oversimplified answer while ignoring sequencing, thresholds, and clock-start differences across states.",
+          "Utah, Wyoming, and North Dakota all share California's thirty-day SB-446 discovery clock and Attorney General sequencing model while ignoring sequencing, thresholds, and clock-start differences across states, which is a common but incorrect training shortcut on multi-state drills.",
         ],
         correctIndex: 1,
         explanation:
@@ -1056,12 +1056,12 @@ export const MODULES: Module[] = [
         id: "m-mcq-la-sd",
         type: "mcq",
         question:
-          "Louisiana vs South Dakota timing/AG contrast after discovery Day 0 of a clear notice event:",
+          "After discovery Day 0 of a clear notice event, which Louisiana versus South Dakota timing and Attorney General contrast matches teaching?",
         options: [
-          "Both are discovery ≤30 clocks with AG at 500+ only",
-          "Both commonly taught with ~60-day outer bounds; LA AG notice is tied to resident notice (often with a short post-consumer package timing teaching point), while SD AG is commonly taught at >250 residents — related clocks, different regulator math",
-          "Only Louisiana ever requires AG notice in the United States",
-          "South Dakota has no breach statute",
+          "Both Louisiana and South Dakota are discovery clocks of thirty days or less with Attorney General notice only at five hundred or more residents even though the teaching chart requires a jurisdiction-specific analysis, collapsing distinct statutory families into one oversimplified answer while ignoring sequencing, thresholds, and clock-start differences across states.",
+          "Both are commonly taught with roughly sixty-day outer bounds; Louisiana Attorney General notice is tied to resident notice, often with a short post-consumer package timing teaching point, while South Dakota Attorney General notice is commonly taught above two hundred fifty residents — related clocks, different regulator math.",
+          "Only Louisiana ever requires Attorney General notice for private-sector breaches anywhere in the United States under teaching charts while ignoring sequencing, thresholds, and clock-start differences across states, which is a common but incorrect training shortcut on multi-state drills under a single national rule that does not exist in BreachGym teaching.",
+          "South Dakota has no breach-notice statute at all, so the Louisiana analysis alone covers any South Dakota residents on the matrix, which is a common but incorrect training shortcut on multi-state drills under a single national rule that does not exist in BreachGym teaching without mapping each affected state's statute, clock, and regulator path, treating every jurisdiction as if it copied California's notice model.",
         ],
         correctIndex: 1,
         explanation:
@@ -1077,10 +1077,10 @@ export const MODULES: Module[] = [
         question:
           "AG threshold cluster: PA (>500), OK (500+ teaching), MO (>1,000). Partner says '500 is universal.' Best reply?",
         options: [
-          "Agree — file every AG at 500 nationwide",
-          "Disagree — Pennsylvania and Oklahoma often sit near the 500 band, but Missouri's AG teaching commonly starts above 1,000; other states use 250, 50 (DC), or no minimum (CT/VT/ME)",
-          "Missouri never has an AG path",
-          "Oklahoma always requires AG before individuals like Maryland",
+          "Agree and file every Attorney General at five hundred residents nationwide, because that headcount is a universal teaching gate, collapsing distinct statutory families into one oversimplified answer while ignoring sequencing, thresholds, and clock-start differences across states, which is a common but incorrect training shortcut on multi-state drills.",
+          "Disagree: Pennsylvania and Oklahoma often sit near the five-hundred band, but Missouri's Attorney General teaching commonly starts above one thousand; other states use two hundred fifty, fifty in the District of Columbia, or no minimum in Connecticut, Vermont, and Maine.",
+          "Missouri never has an Attorney General path for private-sector breaches, so the five-hundred meme is safe for Pennsylvania and Oklahoma only, which is a common but incorrect training shortcut on multi-state drills under a single national rule that does not exist in BreachGym teaching.",
+          "Oklahoma always requires Attorney General notice before individuals, matching Maryland's sequencing rule in every commercial incident under a single national rule that does not exist in BreachGym teaching without mapping each affected state's statute, clock, and regulator path.",
         ],
         correctIndex: 1,
         explanation:
@@ -1106,10 +1106,10 @@ export const MODULES: Module[] = [
         question:
           "New Mexico AG threshold (§57-12C-10 teaching): you will notify 800 NM residents about a confirmed breach. Partner asks whether AG notice is automatic because NM is a 'low/no floor' state. Best reply?",
         options: [
-          "Yes — New Mexico AG notice has no headcount floor, exactly like Connecticut",
-          "No — New Mexico AG notice is commonly taught when >1,000 New Mexico residents are notified; 800 alone does not trip that AG gate (still map individual notice and other recipients)",
-          "New Mexico never has an AG path",
-          "File New Mexico AG only if California AG is also filing",
+          "Yes — New Mexico Attorney General notice has no headcount floor, exactly like Connecticut's whenever-residents-are-notified teaching while ignoring sequencing, thresholds, and clock-start differences across states, which is a common but incorrect training shortcut on multi-state drills.",
+          "No — New Mexico Attorney General notice is commonly taught when more than one thousand New Mexico residents are notified; eight hundred alone does not trip that Attorney General gate, though individual notice and other recipients still need mapping.",
+          "New Mexico never has an Attorney General path for private-sector breaches under BreachGym multi-state teaching charts under a single national rule that does not exist in BreachGym teaching without mapping each affected state's statute, clock, and regulator path, treating every jurisdiction as if it copied California's notice model.",
+          "File New Mexico Attorney General notice only if California's Attorney General is also receiving a sample package on the same day without mapping each affected state's statute, clock, and regulator path, treating every jurisdiction as if it copied California's notice model.",
         ],
         correctIndex: 1,
         explanation:
@@ -1135,10 +1135,10 @@ export const MODULES: Module[] = [
         question:
           "Vermont AG preliminary quirk: discovery Day 0 of a clear notice event affecting VT residents. Which timing seam is highest-yield?",
         options: [
-          "Vermont never requires AG notice under 500 residents",
-          "Vermont AG notice has no headcount minimum, and preliminary AG notice is commonly taught within 14 business days of discovery — diary that early AG touch even while the individual ≤45-day package is still in draft",
-          "Vermont AG notice always waits until day 45 with individuals",
-          "Vermont follows only California's 15-day after-consumer AG sample rule",
+          "Vermont never requires Attorney General notice for fewer than five hundred residents, matching the classic five-hundred Attorney General meme, which is a common but incorrect training shortcut on multi-state drills under a single national rule that does not exist in BreachGym teaching.",
+          "Vermont Attorney General notice has no headcount minimum, and preliminary Attorney General notice is commonly taught within fourteen business days of discovery — diary that early Attorney General touch even while the individual forty-five-day package is still in draft.",
+          "Vermont Attorney General notice always waits until day forty-five alongside individuals, with no preliminary Attorney General teaching path without mapping each affected state's statute, clock, and regulator path, treating every jurisdiction as if it copied California's notice model.",
+          "Vermont follows only California's fifteen-day after-consumer Attorney General sample rule and has no independent preliminary Attorney General clock, treating every jurisdiction as if it copied California's notice model even though the teaching chart requires a jurisdiction-specific analysis.",
         ],
         correctIndex: 1,
         explanation:
@@ -1197,12 +1197,12 @@ export const MODULES: Module[] = [
       {
         id: "c-mcq-1",
         type: "mcq",
-        question: "Highest-yield risk-contrast set for training (not the only one)?",
+        question: "Which risk-contrast set is highest-yield for associate training (not the only useful set)?",
         options: [
-          "CA/IL/GA (generally no risk escape for classic unencrypted PI acquisition) vs CT/AK/MI/AZ (documented no-harm / misuse / substantial-loss analyses)",
-          "Only Wyoming vs Only Montana forever",
-          "Maritime law vs space law",
-          "Font size vs line height",
+          "California, Illinois, and Georgia generally offer no risk escape for classic unencrypted personal-information acquisition, while Connecticut, Alaska, Michigan, and Arizona teach documented no-harm, misuse, or substantial-loss analyses.",
+          "Only Wyoming versus only Montana forever is the highest-yield risk contrast set for associate training drills without mapping each affected state's statute, clock, and regulator path, treating every jurisdiction as if it copied California's notice model.",
+          "Maritime law versus space law is the highest-yield risk contrast set for private-sector multi-state breach teaching, treating every jurisdiction as if it copied California's notice model even though the teaching chart requires a jurisdiction-specific analysis.",
+          "Font size versus line height in consumer letters is the highest-yield risk contrast set across fifty states and the District of Columbia even though the teaching chart requires a jurisdiction-specific analysis, collapsing distinct statutory families into one oversimplified answer.",
         ],
         correctIndex: 0,
         explanation:
@@ -1218,10 +1218,10 @@ export const MODULES: Module[] = [
         question:
           "Multi-state IR plan: affected residents in WA (≤30 discovery), OR (≤45 discovery), TX (≤60 after determination), and KY (expedient / risk-in-definition). Which planning rule is sound?",
         options: [
-          "Ignore WA because Oregon's 45-day clock is 'close enough'",
-          "Plan to the shortest applicable fixed outer bound among affected states — WA's ≤30 discovery clock typically forces the earliest consumer-notice target here; still map KY's risk-in-definition and TX's determination family separately",
-          "Always wait for Texas's day 60",
-          "Only Kentucky matters because it is expedient",
+          "Ignore Washington because Oregon's forty-five-day clock is close enough for planning purposes on this multi-state incident without mapping each affected state's statute, clock, and regulator path, treating every jurisdiction as if it copied California's notice model.",
+          "Plan to the shortest applicable fixed outer bound among affected states: Washington's thirty-day-or-less discovery clock typically forces the earliest consumer-notice target here; still map Kentucky's risk-in-definition and Texas's determination family separately.",
+          "Always wait for Texas's day sixty after determination before sending any consumer notice in Washington, Oregon, or Kentucky even though the teaching chart requires a jurisdiction-specific analysis, collapsing distinct statutory families into one oversimplified answer while ignoring sequencing, thresholds, and clock-start differences across states.",
+          "Only Kentucky matters for planning because expedient statutes license waiting out every neighbor's longer numeric individual clock, collapsing distinct statutory families into one oversimplified answer while ignoring sequencing, thresholds, and clock-start differences across states.",
         ],
         correctIndex: 1,
         explanation:
@@ -1234,12 +1234,12 @@ export const MODULES: Module[] = [
       {
         id: "c-mcq-2",
         type: "mcq",
-        question: "Fastest way to look silly in a multi-state update email?",
+        question: "Which mistake is the fastest way to look silly in a multi-state breach update email?",
         options: [
-          "Confusing Virginia breach notice with VCDPA privacy obligations — or assuming every Southeast state copies Florida's DLA 500+ / 30-day determination model",
-          "Listing resident counts by jurisdiction",
-          "Flagging MD AG sequencing and NH's AG-whenever / AG-before path (no 1,000 AG floor)",
-          "Noting encryption status and key custody",
+          "Confusing Virginia breach notice with Virginia Consumer Data Protection Act privacy obligations, or assuming every Southeast state copies Florida's Department of Legal Affairs five-hundred-plus and thirty-day determination model.",
+          "Listing resident counts by jurisdiction in the update email, which partners treat as an unprofessional multi-state drafting habit even though the teaching chart requires a jurisdiction-specific analysis, collapsing distinct statutory families into one oversimplified answer.",
+          "Flagging Maryland Attorney General sequencing and New Hampshire's Attorney General-whenever path without a one-thousand Attorney General floor, collapsing distinct statutory families into one oversimplified answer while ignoring sequencing, thresholds, and clock-start differences across states.",
+          "Noting encryption status and key custody for each data set in the multi-state update, which training treats as a silly mistake while ignoring sequencing, thresholds, and clock-start differences across states, which is a common but incorrect training shortcut on multi-state drills.",
         ],
         correctIndex: 0,
         explanation:
@@ -1255,10 +1255,10 @@ export const MODULES: Module[] = [
         question:
           "Credential-only dump: email + password hashes that may permit account access; no name/SSN/DL. Which statement is most accurate?",
         options: [
-          "Every state fires identically because passwords are always PI",
-          "Credential expansions commonly fire in places like CA/NY/CO/IL/WA/NJ/DE/AZ/OR/AL — while classic-only teaching states (e.g., TX/KS/ID/KY) may miss unless other elements appear; hashed credentials can be fact-dependent — investigate, do not bluff a national yes/no",
-          "Only Texas requires notice for passwords",
-          "No state ever covers credentials without an SSN",
+          "Every state fires identically on credential dumps because passwords are always personal information under every classic statute even though the teaching chart requires a jurisdiction-specific analysis, collapsing distinct statutory families into one oversimplified answer while ignoring sequencing, thresholds, and clock-start differences across states, which is a common but incorrect training shortcut on multi-state drills.",
+          "Credential expansions commonly fire in places such as California, New York, Colorado, Illinois, Washington, New Jersey, Delaware, Arizona, Oregon, and Alabama, while classic-only teaching states such as Texas, Kansas, Idaho, and Kentucky may miss unless other elements appear; hashed credentials can be fact-dependent, so investigate rather than bluffing a national yes or no.",
+          "Only Texas requires notice for password dumps, because classic Texas personal-information teaching uniquely lists credentials without other elements while ignoring sequencing, thresholds, and clock-start differences across states, which is a common but incorrect training shortcut on multi-state drills under a single national rule that does not exist in BreachGym teaching.",
+          "No state ever covers credentials without a Social Security number also appearing in the same export under BreachGym teaching, which is a common but incorrect training shortcut on multi-state drills under a single national rule that does not exist in BreachGym teaching without mapping each affected state's statute, clock, and regulator path, treating every jurisdiction as if it copied California's notice model.",
         ],
         correctIndex: 1,
         explanation:
@@ -1290,10 +1290,10 @@ export const MODULES: Module[] = [
         question:
           "Minnesota CRA teaching contrast: 600 MN residents clearly in scope, no general AG filing in the usual private-sector teaching. What still bites?",
         options: [
-          "Nothing — no AG means no regulator work",
-          "Minnesota's CRA notice path at 500+ is often taught with an unusually tight timing expectation — regulator work is not only 'AG letters'",
-          "Only California CRAs matter",
-          "Wait 90 days so CRA duties expire",
+          "Nothing further is required; the absence of a general Attorney General filing means no regulator work remains for Minnesota residents, collapsing distinct statutory families into one oversimplified answer.",
+          "Minnesota's consumer reporting agency notice path at five hundred or more residents is often taught with an unusually tight timing expectation — regulator work is not limited to Attorney General letters alone.",
+          "Only California consumer reporting agencies matter when Minnesota residents are in scope, so Minnesota-specific bureau timing can be ignored, which is a common but incorrect training shortcut on multi-state drills under a single national rule that does not exist in BreachGym teaching.",
+          "Wait ninety days so consumer reporting agency duties expire automatically under Minnesota teaching before any bureau notice is due under a single national rule that does not exist in BreachGym teaching without mapping each affected state's statute, clock, and regulator path.",
         ],
         correctIndex: 1,
         explanation:
@@ -1306,12 +1306,12 @@ export const MODULES: Module[] = [
       {
         id: "c-mcq-3",
         type: "mcq",
-        question: "Demo disclaimer you should remember forever:",
+        question: "Which disclaimer about BreachGym should you remember whenever using this training gym?",
         options: [
-          "BreachGym is educational only — not legal advice; verify current statutes before advising clients",
-          "This app replaces your bar license",
-          "localStorage is a court filing system",
-          "Emoji badges are admissible stipulations",
+          "BreachGym is educational only and is not legal advice; verify current statutes before advising clients across jurisdictions.",
+          "This application replaces your bar license and may be cited as a formal opinion letter in client counseling, which is a common but incorrect training shortcut on multi-state drills.",
+          "Browser localStorage is a court filing system that preserves Attorney General submissions with legal effect under a single national rule that does not exist in BreachGym teaching.",
+          "Emoji badges earned in the gym are admissible stipulations that bind regulators in multi-state breach matters without mapping each affected state's statute, clock, and regulator path.",
         ],
         correctIndex: 0,
         explanation:

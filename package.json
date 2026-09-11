@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "export": "GITHUB_PAGES=true next build",
-    "verify:freshness": "node scripts/verify-freshness.mjs"
+    "verify:freshness": "node scripts/verify-freshness.mjs",
+    "verify:mcq-balance": "node scripts/verify-mcq-balance.mjs",
+    "verify": "npm run verify:freshness && npm run verify:mcq-balance"
   },
   "dependencies": {
     "next": "14.2.35",

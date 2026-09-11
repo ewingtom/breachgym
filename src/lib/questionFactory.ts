@@ -59,7 +59,6 @@ function classifyAg(s: StateLaw): AgBucket {
     ) &&
     !/whenever|no .*floor|no headcount|no resident headcount|no classic 500/.test(t)
   ) {
-    // GA, ID, etc. — but catch false positives for "no floor"
     if (/no (general |direct |mandatory )?ag|often no ag|no ag notification requirement/.test(t)) {
       return "none";
     }
@@ -117,14 +116,121 @@ function classifySeq(s: StateLaw): SeqKind {
   return "none";
 }
 
+/** Parallel full-sentence AG teaching labels (similar length by design). */
 const AG_LABEL: Record<AgBucket, string> = {
-  none: "No general AG notice in the core teaching",
-  "no-floor": "AG whenever residents are notified (no headcount floor)",
-  "50": "AG / OAG around 50+ residents",
-  "250": "AG around 250+ residents",
-  "500": "AG around 500+ residents",
-  "1000": "AG around 1,000+ residents",
+  none: "No general Attorney General notice is required under the core private-sector teaching for this state",
+  "no-floor":
+    "Attorney General notice is taught whenever residents are notified, with no resident headcount floor",
+  "50": "Attorney General or OAG notice is commonly taught once about 50 or more residents are affected",
+  "250": "Attorney General notice is commonly taught once about 250 or more residents are affected",
+  "500": "Attorney General notice is commonly taught once about 500 or more residents are affected",
+  "1000":
+    "Attorney General notice is commonly taught once about 1,000 or more residents are affected",
 };
+
+const DISTRACTOR_PAD_PHRASES = [
+  ", which is a common but incorrect training shortcut on multi-state drills",
+  " under a single national rule that does not exist in BreachGym teaching",
+  " without mapping each affected state's statute, clock, and regulator path",
+  ", treating every jurisdiction as if it copied California's notice model",
+  " even though the teaching chart requires a jurisdiction-specific analysis",
+  ", collapsing distinct statutory families into one oversimplified answer",
+  " while ignoring sequencing, thresholds, and clock-start differences across states",
+  ", which would mishandle resident geography and Attorney General filing gates",
+];
+
+/**
+ * Pad distractors so the correct answer is not systematically the longest.
+ * Aims for a similar length band (roughly ±20%), and often makes one
+ * plausible distractor slightly longer than the correct option.
+ * No-ops for already-tight clusters (e.g. "30 days" / "45 days").
+ */
+export function balanceOptionLengths(
+  options: string[],
+  correctIndex: number,
+  rng?: Rng
+): string[] {
+  if (options.length < 3 || correctIndex < 0 || correctIndex >= options.length) {
+    return [...options];
+  }
+  const out = options.map((o) => o.trim());
+  const rand: Rng = rng ?? (() => Math.random());
+  const lengths = out.map((s) => s.length);
+  const minLen = Math.min(...lengths);
+  const maxLen = Math.max(...lengths);
+  const mean = lengths.reduce((a, n) => a + n, 0) / lengths.length;
+  const correctLen = lengths[correctIndex];
+
+  // Short numeric / stub clusters are already length-fair (e.g. day counts).
+  if (maxLen <= 28 && maxLen - minLen <= 10) {
+    return out;
+  }
+  // Already balanced: correct not uniquely longest, and band is tight.
+  const maxOther = Math.max(...lengths.filter((_, i) => i !== correctIndex));
+  if (correctLen <= maxOther && maxLen - minLen <= Math.max(16, mean * 0.25)) {
+    return out;
+  }
+
+  const distractorIndices = out
+    .map((_, i) => i)
+    .filter((i) => i !== correctIndex);
+
+  const makeDistractorLonger = rand() < 0.55;
+  const longIdx =
+    distractorIndices[Math.floor(rand() * distractorIndices.length)];
+
+  const targetBase = Math.max(
+    48,
+    Math.round(correctLen * 0.92),
+    Math.round(mean * 1.05)
+  );
+
+  function padTo(text: string, target: number): string {
+    let s = text;
+    let guard = 0;
+    while (s.length < target && guard < 10) {
+      const phrase =
+        DISTRACTOR_PAD_PHRASES[Math.floor(rand() * DISTRACTOR_PAD_PHRASES.length)];
+      let next: string;
+      if (s.endsWith(".")) {
+        next = s.slice(0, -1) + phrase + ".";
+      } else {
+        next = s + phrase;
+      }
+      if (next === out[correctIndex] || out.includes(next)) {
+        next = s + " in this multi-state fact pattern";
+      }
+      s = next;
+      guard += 1;
+    }
+    return s;
+  }
+
+  for (const i of distractorIndices) {
+    const target =
+      makeDistractorLonger && i === longIdx
+        ? Math.round(correctLen * (1.06 + rand() * 0.14))
+        : Math.round(targetBase * (0.88 + rand() * 0.18));
+    if (out[i].length < target * 0.85) {
+      out[i] = padTo(out[i], target);
+    }
+  }
+
+  // Final pass: correct must not remain uniquely longest by a wide margin.
+  const refreshedOther = Math.max(
+    ...out.map((s) => s.length).filter((_, i) => i !== correctIndex)
+  );
+  if (out[correctIndex].length > refreshedOther) {
+    for (const i of distractorIndices) {
+      const floor = Math.round(out[correctIndex].length * (0.95 + rand() * 0.12));
+      if (out[i].length < floor) {
+        out[i] = padTo(out[i], floor);
+      }
+    }
+  }
+
+  return out;
+}
 
 function stateWeight(code: string, profile: UserProfile, prefer: Set<string>): number {
   let w = 1;
@@ -150,7 +256,6 @@ function pickStates(
   const prefer = new Set(preferStates.map((c) => c.toUpperCase()));
   let pool = STATES.filter((s) => (filter ? filter(s) : true));
   if (!pool.length) pool = [...STATES];
-  const weights = pool.map((s) => stateWeight(s.code, profile, prefer));
   const picked: StateLaw[] = [];
   const used = new Set<string>();
   for (let i = 0; i < n && picked.length < pool.length; i++) {
@@ -161,7 +266,6 @@ function pickStates(
     used.add(choice.code);
     picked.push(choice);
   }
-  void weights;
   return picked;
 }
 
@@ -189,13 +293,15 @@ function mcq(
     states: StateCode[];
     xp: number;
     topic?: string;
+    rng?: Rng;
   }
 ): GeneratedMcq {
+  const balanced = balanceOptionLengths(opts.options, opts.correctIndex, opts.rng);
   return {
     id: opts.id,
     type: "mcq",
     question: opts.question,
-    options: opts.options,
+    options: balanced,
     correctIndex: opts.correctIndex,
     explanation: opts.explanation,
     topic: opts.topic || opts.topics[0] || "multi-state-matrix",
@@ -223,10 +329,10 @@ const tmplRisk: TemplateFn = ({ rng, profile, level, preferStates }) => {
     if (!s) return null;
     const hasRisk = s.riskOfHarm === "yes" || s.riskOfHarm === "limited";
     const options = [
-      "Generally has a risk / misuse investigation path that can avoid individual notice",
-      "Generally no risk-of-harm escape hatch once unencrypted PI is acquired (classic teaching)",
-      "Only encryption safe harbor matters — risk analysis is never taught",
-      "Federal FOIA always displaces state notice",
+      "This state generally teaches a risk-of-harm or misuse investigation path that can avoid individual notice after documented analysis.",
+      "This state generally has no risk-of-harm escape hatch once unencrypted personal information is acquired under classic teaching.",
+      "Only encryption safe harbor matters here; risk analysis is never part of the BreachGym teaching chart for this statute.",
+      "Federal FOIA always displaces state breach notice, so the state risk-of-harm doctrine is irrelevant for private-sector incidents.",
     ];
     const correctIndex = hasRisk ? 0 : 1;
     const fp = makeFingerprint("risk-single", [s.code], String(s.riskOfHarm));
@@ -235,39 +341,40 @@ const tmplRisk: TemplateFn = ({ rng, profile, level, preferStates }) => {
       fingerprint: fp,
       question:
         level === "novice"
-          ? `Does ${s.name} (${s.code}) teach a risk-of-harm / misuse gate that can avoid individual notice?`
-          : `On a credential + classic-element dump affecting ${s.name} residents, which statement matches BreachGym teaching for ${s.code}?`,
+          ? `Does ${s.name} (${s.code}) teach a risk-of-harm or misuse gate that can avoid individual notice after investigation?`
+          : `On a credential-plus-classic-element dump affecting ${s.name} residents, which statement matches BreachGym teaching for ${s.code}?`,
       options,
       correctIndex,
-      explanation: `${s.name}: ${s.riskNote} (riskOfHarm=${s.riskOfHarm}). Contrast with pure no-risk states like CA/TX teaching.`,
+      explanation: `${s.name}: ${s.riskNote} (riskOfHarm=${s.riskOfHarm}). Contrast with pure no-risk teaching states such as California and Texas.`,
       topics: ["risk-of-harm"],
       states: [s.code],
       xp: baseXp(level, 12),
+      rng,
     });
   }
-  // Advanced+: contrast two states
   const riskYes = pickStates(rng, profile, preferStates, 1, (s) => s.riskOfHarm === "yes");
   const riskNo = pickStates(rng, profile, preferStates, 1, (s) => s.riskOfHarm === "none");
   const a = riskYes[0];
   const b = riskNo[0];
   if (!a || !b) return null;
   const options = [
-    `${a.code} has a risk/misuse gate; ${b.code} generally does not`,
-    `${b.code} has a risk/misuse gate; ${a.code} generally does not`,
-    `Both ${a.code} and ${b.code} use identical CT-style risk escapes`,
-    `Neither statute ever discusses harm likelihood`,
+    `${a.name} (${a.code}) teaches a risk or misuse gate; ${b.name} (${b.code}) generally does not offer that escape.`,
+    `${b.name} (${b.code}) teaches a risk or misuse gate; ${a.name} (${a.code}) generally does not offer that escape.`,
+    `Both ${a.code} and ${b.code} use identical Connecticut-style risk escapes for every unencrypted personal-information acquisition.`,
+    `Neither ${a.name} nor ${b.name} ever discusses harm likelihood in BreachGym's private-sector teaching charts.`,
   ];
   const fp = makeFingerprint("risk-seam", [a.code, b.code], "contrast");
   return mcq({
     id: `gen-riskseam-${a.code}-${b.code}-${fp.slice(-6)}`,
     fingerprint: fp,
-    question: `Risk seam: ${a.name} vs ${b.name}. Which contrast is sound?`,
+    question: `Compare risk-of-harm teaching for ${a.name} versus ${b.name}. Which contrast is sound?`,
     options,
     correctIndex: 0,
     explanation: `${a.name}: ${a.riskNote} ${b.name}: ${b.riskNote}`,
     topics: ["risk-of-harm", "multi-state-matrix"],
     states: [a.code, b.code],
     xp: baseXp(level, 16),
+    rng,
   });
 };
 
@@ -286,18 +393,19 @@ const tmplAg: TemplateFn = ({ rng, profile, level, preferStates }) => {
   const fp = makeFingerprint("ag-threshold", [s.code], bucket);
   const stem =
     level === "seam-surgeon" || level === "advanced"
-      ? `AG threshold trap — ${s.name} (${s.code}). A private-sector breach will notify ${s.code} residents. Which AG teaching bucket fits?`
-      : `For ${s.name} (${s.code}), which AG / regulator threshold matches the teaching chart?`;
+      ? `Attorney General threshold trap for ${s.name} (${s.code}): a private-sector breach will notify ${s.code} residents. Which Attorney General teaching bucket fits?`
+      : `For ${s.name} (${s.code}), which Attorney General or regulator threshold matches the BreachGym teaching chart?`;
   return mcq({
     id: `gen-ag-${s.code}-${fp.slice(-6)}`,
     fingerprint: fp,
     question: stem,
     options,
     correctIndex,
-    explanation: `${s.name} AG: ${s.agThreshold} Timeline note: ${s.agTimeline}`,
+    explanation: `${s.name} Attorney General teaching: ${s.agThreshold} Timeline note: ${s.agTimeline}`,
     topics: ["ag-threshold"],
     states: [s.code],
     xp: baseXp(level, 14),
+    rng,
   });
 };
 
@@ -319,22 +427,23 @@ const tmplAgContrast: TemplateFn = ({ rng, profile, level, preferStates }) => {
   )[0];
   if (!ctLike || !floor500) return null;
   const options = [
-    `${ctLike.code}: AG with no headcount floor · ${floor500.code}: classic 500+ AG bucket`,
-    `${floor500.code}: AG with no headcount floor · ${ctLike.code}: classic 500+ AG bucket`,
-    `Both use a hard 1,000 AG floor only`,
-    `Neither ever notifies an AG`,
+    `${ctLike.name} (${ctLike.code}) teaches Attorney General notice with no headcount floor, while ${floor500.name} (${floor500.code}) sits in the classic 500-plus Attorney General bucket.`,
+    `${floor500.name} (${floor500.code}) teaches Attorney General notice with no headcount floor, while ${ctLike.name} (${ctLike.code}) sits in the classic 500-plus Attorney General bucket.`,
+    `Both ${ctLike.code} and ${floor500.code} use a hard 1,000-resident Attorney General floor and never notify below that headcount.`,
+    `Neither ${ctLike.name} nor ${floor500.name} ever notifies an Attorney General for private-sector resident breaches under teaching charts.`,
   ];
   const fp = makeFingerprint("ag-contrast", [ctLike.code, floor500.code], "nf-500");
   return mcq({
     id: `gen-agx-${ctLike.code}-${floor500.code}-${fp.slice(-6)}`,
     fingerprint: fp,
-    question: `Do not drop ${ctLike.name} into the 500+ AG bucket. Which contrast is correct vs ${floor500.name}?`,
+    question: `Do not drop ${ctLike.name} into the 500-plus Attorney General bucket. Which contrast versus ${floor500.name} is correct?`,
     options,
     correctIndex: 0,
     explanation: `${ctLike.name}: ${ctLike.agThreshold} ${floor500.name}: ${floor500.agThreshold}`,
     topics: ["ag-threshold", "multi-state-matrix"],
     states: [ctLike.code, floor500.code],
     xp: baseXp(level, 18),
+    rng,
   });
 };
 
@@ -349,24 +458,23 @@ const tmplClock: TemplateFn = ({ rng, profile, level, preferStates }) => {
   if (!withDays) return null;
   const clock = classifyClock(withDays);
   const dayOpts = seededShuffle(
-    Array.from(
-      new Set(
-        [clock.days!, 15, 30, 45, 60, 90].filter((d) => d > 0)
-      )
-    ),
+    Array.from(new Set([clock.days!, 15, 30, 45, 60, 90].filter((d) => d > 0))),
     rng
   ).slice(0, 4);
   if (!dayOpts.includes(clock.days!)) {
     dayOpts[0] = clock.days!;
   }
-  const options = dayOpts.map((d) => `${d} days`);
-  const correctIndex = options.indexOf(`${clock.days} days`);
   const kindLabel =
     clock.kind === "discovery"
       ? "discovery-linked"
       : clock.kind === "determination"
         ? "determination-linked"
-        : "outer-bound / expedient teaching";
+        : "outer-bound or expedient teaching";
+  const options = dayOpts.map(
+    (d) =>
+      `About ${d} days is the individual-notice outer bound commonly taught for this ${kindLabel} clock.`
+  );
+  const correctIndex = dayOpts.indexOf(clock.days!);
   const topic: TopicId =
     clock.kind === "discovery" ? "timing-discovery" : "timing-determination";
   const fp = makeFingerprint("clock", [withDays.code], `${clock.kind}-${clock.days}`);
@@ -376,13 +484,14 @@ const tmplClock: TemplateFn = ({ rng, profile, level, preferStates }) => {
     question:
       level === "novice"
         ? `${withDays.name} (${withDays.code}) individual-notice teaching often cites which day-count outer bound?`
-        : `Clock race — ${withDays.name} (${withDays.code}). The individual timeline is best remembered as which day-count (${kindLabel})?`,
+        : `Clock race for ${withDays.name} (${withDays.code}): the individual timeline is best remembered as which day-count (${kindLabel})?`,
     options,
     correctIndex,
     explanation: `${withDays.name}: ${withDays.individualTimeline}`,
     topics: [topic, "multi-state-matrix"],
     states: [withDays.code],
     xp: baseXp(level, 14),
+    rng,
   });
 };
 
@@ -402,26 +511,29 @@ const tmplClockRace: TemplateFn = ({ rng, profile, level, preferStates }) => {
     1,
     (s) =>
       classifyClock(s).kind === "determination" &&
-      (classifyClock(s).days === 30 || classifyClock(s).days === 45 || classifyClock(s).days === 60)
+      (classifyClock(s).days === 30 ||
+        classifyClock(s).days === 45 ||
+        classifyClock(s).days === 60)
   )[0];
   if (!disc || !det) return null;
   const options = [
-    `${disc.code} teaches a discovery-linked ~30-day outer bound; ${det.code} is determination-linked`,
-    `${det.code} teaches a discovery-linked ~30-day outer bound; ${disc.code} is determination-linked`,
-    `Both start the clock only on AG filing day`,
-    `Neither statute uses a numeric day-count in teaching`,
+    `${disc.name} (${disc.code}) teaches a discovery-linked roughly 30-day outer bound, while ${det.name} (${det.code}) is determination-linked.`,
+    `${det.name} (${det.code}) teaches a discovery-linked roughly 30-day outer bound, while ${disc.name} (${disc.code}) is determination-linked.`,
+    `Both ${disc.code} and ${det.code} start the individual clock only on the day the Attorney General filing is submitted.`,
+    `Neither ${disc.name} nor ${det.name} uses a numeric day-count in BreachGym individual-notice teaching.`,
   ];
   const fp = makeFingerprint("clock-race", [disc.code, det.code], "disc-det");
   return mcq({
     id: `gen-race-${disc.code}-${det.code}-${fp.slice(-6)}`,
     fingerprint: fp,
-    question: `Timing race: ${disc.name} vs ${det.name}. Which contrast matches the charts?`,
+    question: `Timing race between ${disc.name} and ${det.name}. Which contrast matches the teaching charts?`,
     options,
     correctIndex: 0,
     explanation: `${disc.name}: ${disc.individualTimeline} ${det.name}: ${det.individualTimeline}`,
     topics: ["timing-discovery", "timing-determination", "multi-state-matrix"],
     states: [disc.code, det.code],
     xp: baseXp(level, 18),
+    rng,
   });
 };
 
@@ -439,16 +551,16 @@ const tmplSeq: TemplateFn = ({ rng, profile, level, preferStates }) => {
   const options =
     kind === "police-before"
       ? [
-          "Notify State Police (and coordinate as required) before customer notice",
-          "Wait until after all customer notices to tell any regulator",
-          "Only CRA notice is sequenced; police notice is optional folklore",
-          "AG sample is due 15 days before any individual notice always",
+          "Notify State Police and coordinate as required before sending customer notice under the teaching sequencing rule.",
+          "Wait until after all customer notices are complete before telling any regulator or State Police about the incident.",
+          "Only consumer reporting agency notice is sequenced; State Police notice is optional folklore that training can ignore.",
+          "An Attorney General sample package is always due fifteen days before any individual notice in every state.",
         ]
       : [
-          "Notify the AG before (or with anticipated date of) individual notice",
-          "Always wait until 30 days after individual notice to tell the AG",
-          "Sequencing never matters for AG vs individuals",
-          "Only federal LE can be notified before residents",
+          "Notify the Attorney General before, or with the anticipated date of, individual notice under the teaching sequencing rule.",
+          "Always wait until thirty days after individual notice before telling the Attorney General anything about the breach.",
+          "Sequencing never matters for Attorney General notice versus individuals once personal information is confirmed stolen.",
+          "Only federal law enforcement may be notified before residents; state Attorney General sequencing is never taught.",
         ];
   const fp = makeFingerprint("seq", [s.code], kind);
   return mcq({
@@ -456,14 +568,15 @@ const tmplSeq: TemplateFn = ({ rng, profile, level, preferStates }) => {
     fingerprint: fp,
     question:
       level === "novice"
-        ? `${s.name} (${s.code}) sequencing: what is the famous regulator-before-individuals wrinkle?`
-        : `Sequencing trap — ${s.name} (${s.code}). Which order matches teaching?`,
+        ? `${s.name} (${s.code}) sequencing: what is the famous regulator-before-individuals wrinkle in teaching?`
+        : `Sequencing trap for ${s.name} (${s.code}). Which order matches BreachGym teaching?`,
     options,
     correctIndex: 0,
     explanation: `${s.name}: ${s.agThreshold} / ${s.agTimeline}`,
     topics: ["sequencing"],
     states: [s.code],
     xp: baseXp(level, 15),
+    rng,
   });
 };
 
@@ -481,22 +594,23 @@ const tmplSeqContrast: TemplateFn = ({ rng, profile, level, preferStates }) => {
   if (!md || !nj) return null;
   const third = after || STATE_MAP.IA;
   const options = [
-    `MD: AG before individuals · NJ: State Police before customers · ${third.code}: AG path after consumer notice (teaching contrast)`,
-    `NJ: AG before individuals · MD: State Police before customers · ${third.code}: never notifies AG`,
-    `All three use identical concurrent-only AG timing`,
-    `Sequencing is only a federal HIPAA rule`,
+    `Maryland requires Attorney General notice before individuals; New Jersey requires State Police before customers; ${third.name} (${third.code}) teaches an Attorney General path after consumer notice.`,
+    `New Jersey requires Attorney General notice before individuals; Maryland requires State Police before customers; ${third.name} (${third.code}) never notifies an Attorney General.`,
+    `Maryland, New Jersey, and ${third.code} all use identical concurrent-only Attorney General timing with no sequencing wrinkles.`,
+    `Sequencing rules like these appear only in federal HIPAA guidance and never in state private-sector breach teaching.`,
   ];
   const fp = makeFingerprint("seq-contrast", ["MD", "NJ", third.code], "md-nj");
   return mcq({
     id: `gen-seqx-MD-NJ-${fp.slice(-6)}`,
     fingerprint: fp,
-    question: `Multi-state sequencing seam (MD / NJ / ${third.code}). Which statement is sound?`,
+    question: `Multi-state sequencing seam across Maryland, New Jersey, and ${third.name}. Which statement is sound?`,
     options,
     correctIndex: 0,
     explanation: `MD: ${md.agTimeline}. NJ: ${nj.agThreshold}. ${third.name}: ${third.agTimeline}`,
     topics: ["sequencing", "multi-state-matrix"],
     states: ["MD", "NJ", third.code as StateCode],
     xp: baseXp(level, 20),
+    rng,
   });
 };
 
@@ -504,23 +618,26 @@ const tmplHarbor: TemplateFn = ({ rng, profile, level, preferStates }) => {
   const s = pickStates(rng, profile, preferStates, 1)[0];
   if (!s) return null;
   const options = [
-    "Often yes — if data stays encrypted/unreadable and the key was not also compromised",
-    "Never — encryption never matters once a laptop leaves the building",
-    "Only if the FBI pre-approves the cipher suite",
-    "Safe harbor applies only to paper records",
+    "Often yes — if the data stayed encrypted or unreadable and the encryption key was not also compromised in the incident.",
+    "Never — encryption never matters once a laptop leaves the building, even when the key remains securely held elsewhere.",
+    "Only if the FBI pre-approves the cipher suite before the laptop is issued, which is required in every state teaching chart.",
+    "Safe harbor applies only to paper records; electronic full-disk encryption is ignored in BreachGym private-sector teaching.",
   ];
+  // Prefer a plausible distractor slightly longer than the correct when harbor is true (index 0).
+  // When harbor is false, correct is index 1 — already a full sentence; balanceOptionLengths handles pads.
   const correctIndex = s.encryptionSafeHarbor ? 0 : 1;
   const fp = makeFingerprint("harbor", [s.code], String(s.encryptionSafeHarbor));
   return mcq({
     id: `gen-harbor-${s.code}-${fp.slice(-6)}`,
     fingerprint: fp,
-    question: `Encryption safe harbor — stolen laptop, full-disk encryption, key not taken. For ${s.name} (${s.code}), does the teaching chart usually treat this as outside notice?`,
+    question: `Encryption safe harbor: a stolen laptop used full-disk encryption and the key was not taken. For ${s.name} (${s.code}), does the teaching chart usually treat this as outside notice?`,
     options,
     correctIndex,
     explanation: `${s.name}: ${s.safeHarborNote}`,
     topics: ["encryption-harbor"],
     states: [s.code],
     xp: baseXp(level, 12),
+    rng,
   });
 };
 
@@ -529,27 +646,29 @@ const tmplPi: TemplateFn = ({ rng, profile, level, preferStates }) => {
   if (!s) return null;
   const highlight = pickOne(s.piHighlights, rng);
   const fake = [
-    "Only a public ZIP code with no name or account data",
-    "Business card title alone with no statutory element",
-    "Encrypted ciphertext with the key held exclusively by the controller and never breached",
-    "Federal PACER docket number with no resident PI elements",
+    "A public ZIP code alone, with no name, account data, or other statutory personal-information element attached.",
+    "A business-card job title alone, with no name-plus-sensitive-element pairing taught as personal information.",
+    "Encrypted ciphertext whose encryption key was held exclusively by the controller and was never breached or exposed.",
+    "A federal PACER docket number alone, with none of the resident personal-information elements listed in the statute.",
   ];
-  const options = seededShuffle([`Likely in play: ${highlight}`, ...pickN(fake, 3, rng)], rng);
-  const correctIndex = options.findIndex((o) => o.startsWith("Likely in play:"));
+  const correct = `A statutory teaching highlight for this state: ${highlight}.`;
+  const options = seededShuffle([correct, ...pickN(fake, 3, rng)], rng);
+  const correctIndex = options.indexOf(correct);
   const fp = makeFingerprint("pi", [s.code], highlight.slice(0, 40));
   return mcq({
     id: `gen-pi-${s.code}-${fp.slice(-6)}`,
     fingerprint: fp,
     question:
       level === "novice"
-        ? `Which element is part of ${s.name} (${s.code}) PI teaching highlights?`
-        : `PI matrix row — ${s.name} (${s.code}). Which option matches a statutory teaching highlight?`,
+        ? `Which element is part of ${s.name} (${s.code}) personal-information teaching highlights?`
+        : `Personal-information matrix row for ${s.name} (${s.code}). Which option matches a statutory teaching highlight?`,
     options,
     correctIndex,
-    explanation: `${s.name} PI highlights include: ${s.piHighlights.join("; ")}`,
+    explanation: `${s.name} personal-information highlights include: ${s.piHighlights.join("; ")}`,
     topics: ["pi-definition"],
     states: [s.code],
     xp: baseXp(level, 12),
+    rng,
   });
 };
 
@@ -564,34 +683,43 @@ const tmplNoticeMatrix: TemplateFn = ({ rng, profile, level, preferStates }) => 
   let correctIndex: number;
   let explanation: string;
   if (riskYes.length && riskNo.length) {
-    question = `Notice-matrix row: same unencrypted classic PI acquired in ${codes
+    question = `Notice-matrix row: the same unencrypted classic personal information was acquired in ${codes
       .map((c) => c.code)
       .join(", ")}. Who still likely needs an investigation-gated risk analysis before skipping notice?`;
+    const correct = `${riskYes
+      .map((s) => s.name + " (" + s.code + ")")
+      .join(" and ")} — risk or misuse teaching still gates any skip-notice path.`;
+    const wrongRisk = riskNo.length
+      ? `${riskNo
+          .map((s) => s.name + " (" + s.code + ")")
+          .join(" and ")} — these are the only states that still require a risk gate.`
+      : "None of the listed states — risk gates were repealed for all private-sector breaches nationwide.";
     options = seededShuffle(
       [
-        riskYes.map((s) => s.code).join(" / "),
-        riskNo.map((s) => s.code).join(" / ") || "None of them",
-        "Only federal contractors",
-        "Nobody — risk gates were repealed nationally",
+        correct,
+        wrongRisk,
+        "Only federal contractors in these states still run a risk analysis before skipping resident notice.",
+        "Nobody on this list — risk-of-harm gates were repealed nationally and no longer appear in teaching charts.",
       ],
       rng
     );
-    correctIndex = options.indexOf(riskYes.map((s) => s.code).join(" / "));
+    correctIndex = options.indexOf(correct);
     explanation = codes
       .map((s) => `${s.code}: riskOfHarm=${s.riskOfHarm} — ${s.riskNote}`)
       .join(" ");
   } else {
-    question = `Notice-matrix: for ${focus.name}, which AG teaching line belongs in the matrix cell?`;
+    question = `Notice-matrix: for ${focus.name}, which Attorney General teaching line belongs in the matrix cell?`;
+    const correct = focus.agThreshold;
     options = seededShuffle(
       [
-        focus.agThreshold,
-        "Federal CMS notice within 24 hours always",
-        "No state ever notifies an AG for private-sector breaches",
-        "Only CRA notice; AG notice is never taught",
+        correct,
+        "Federal CMS notice within 24 hours always displaces any state Attorney General filing for private-sector breaches.",
+        "No state ever notifies an Attorney General for private-sector breaches under BreachGym teaching charts.",
+        "Only consumer reporting agency notice is taught; Attorney General notice is never part of the matrix cell.",
       ],
       rng
     );
-    correctIndex = options.indexOf(focus.agThreshold);
+    correctIndex = options.indexOf(correct);
     explanation = `${focus.name}: ${focus.agThreshold}`;
   }
   const fp = makeFingerprint(
@@ -609,15 +737,16 @@ const tmplNoticeMatrix: TemplateFn = ({ rng, profile, level, preferStates }) => 
     topics: ["multi-state-matrix", "risk-of-harm", "ag-threshold"],
     states: codes.map((c) => c.code),
     xp: baseXp(level, 16),
+    rng,
   });
 };
 
 const tmplAccess: TemplateFn = ({ rng, profile, level }) => {
   const options = [
-    "Access (viewing) vs acquisition (taking/copying) can diverge by statute — do not assume every 'accessed' event is automatic acquisition notice",
-    "Access and acquisition are always identical in every US state statute",
-    "Only HIPAA defines access; state laws ignore the distinction",
-    "Acquisition never matters if the employee was authorized yesterday",
+    "Access (viewing) versus acquisition (taking or copying) can diverge by statute — do not assume every accessed event is automatic acquisition notice.",
+    "Access and acquisition are always identical verbs in every United States state breach statute, so the distinction never changes the analysis.",
+    "Only HIPAA defines access; state breach-notice laws ignore the access-versus-acquisition distinction in all private-sector teaching charts.",
+    "Acquisition never matters if the employee was authorized yesterday, even when personal information was exported off-network without permission.",
   ];
   const fp = makeFingerprint("access", ["XX"], String(Math.floor(rng() * 4)));
   void profile;
@@ -626,15 +755,16 @@ const tmplAccess: TemplateFn = ({ rng, profile, level }) => {
     fingerprint: fp,
     question:
       level === "novice"
-        ? "Foundations: which statement about access vs acquisition is the safer training rule?"
-        : "Employee snooping on a CRM vs an external actor exporting a CSV — which teaching contrast holds?",
+        ? "Foundations: which statement about access versus acquisition is the safer training rule?"
+        : "An employee snoops in a CRM, versus an external actor exporting a CSV. Which teaching contrast holds?",
     options,
     correctIndex: 0,
     explanation:
-      "BreachGym Foundations: access vs acquisition is a recurring multi-state seam (especially NY SHIELD teaching). Always check the statute's verb and facts.",
+      "BreachGym Foundations: access versus acquisition is a recurring multi-state seam (especially New York SHIELD teaching). Always check the statute's verb and the facts.",
     topics: ["access-vs-acquisition"],
     states: [],
     xp: baseXp(level, 10),
+    rng,
   });
 };
 
@@ -721,7 +851,6 @@ export function generateQuestionPool(opts: FactoryOpts): GeneratedMcq[] {
     return true;
   });
 
-  // Weight templates toward preferred weak topics
   const preferSet = new Set(preferTopics.map((t) => t.toLowerCase()));
   const out: GeneratedMcq[] = [];
   const seenFp = new Set<string>();
@@ -730,7 +859,6 @@ export function generateQuestionPool(opts: FactoryOpts): GeneratedMcq[] {
     const weights = allowed.map((t) => {
       let w = 1;
       if (t.topics.some((x) => preferSet.has(x))) w += 3;
-      // Higher difficulty: prefer multi-state / trap templates
       if (
         (level === "advanced" || level === "seam-surgeon") &&
         (t.id.includes("contrast") || t.id.includes("race") || t.id === "matrix")
@@ -821,7 +949,6 @@ export function generateLessonVariants(
     ...c,
     question: `Fresh drill · ${c.question}`,
   }));
-  // Occasionally inject a fill-blank for timing modules
   if (
     relatedTopics.some((t) => t.startsWith("timing") || t === "ag-threshold") &&
     items.length < count
@@ -840,7 +967,6 @@ export function shuffleLessonItems<T extends { id: string; type: string }>(
 ): T[] {
   const rng = rngFromSeedString(seed);
   if (!opts?.keepFirstNarrative) return seededShuffle(items, rng);
-  // Foundations-friendly: keep first narrative/flashcard block order soft-stable
   if (items.length <= 2) return seededShuffle(items, rng);
   const head = items[0];
   const rest = seededShuffle(items.slice(1), rng);
